@@ -1,0 +1,2365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArgentinaBiz — Ecosistema Empresarial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<style>
+:root {
+  --azul: #0a2540;
+  --celeste: #1a5cff;
+  --celeste-claro: #4d7fff;
+  --oro: #f5a623;
+  --oro-claro: #ffc85a;
+  --blanco: #f8faff;
+  --gris-claro: #edf2ff;
+  --gris-medio: #8898aa;
+  --verde: #00c896;
+  --rojo: #ff3b3b;
+  --fondo: #f0f4ff;
+  --tarjeta: #ffffff;
+  --borde: #d6e0ff;
+  --texto: #1a2540;
+  --texto-secundario: #5a6a88;
+  --sombra: 0 2px 16px rgba(10,37,64,0.10);
+  --sombra-fuerte: 0 8px 40px rgba(10,37,64,0.16);
+  --radio: 14px;
+  --radio-grande: 22px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ===== LAYOUT ===== */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ===== GOOGLE ADS BANNER ===== */
+.ads-banner {
+  background: linear-gradient(90deg, #e8f0fe 0%, #f3e8ff 100%);
+  border-bottom: 1px solid var(--borde);
+  padding: 8px 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--gris-medio);
+  letter-spacing: 0.05em;
+}
+.ads-banner span { font-weight: 600; color: var(--celeste); }
+
+/* ===== TICKER ===== */
+.ticker-bar {
+  background: var(--azul);
+  color: #fff;
+  padding: 0;
+  overflow: hidden;
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+.ticker-label {
+  background: var(--celeste);
+  color: #fff;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  padding: 0 18px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+  z-index: 2;
+}
+.ticker-track {
+  display: flex;
+  animation: ticker 55s linear infinite;
+  gap: 0;
+  align-items: center;
+  height: 100%;
+}
+.ticker-track:hover { animation-play-state: paused; }
+.ticker-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 22px;
+  border-right: 1px solid rgba(255,255,255,0.12);
+  font-size: 12px;
+  font-family: 'DM Mono', monospace;
+  white-space: nowrap;
+  height: 100%;
+}
+.ticker-name { font-weight: 600; color: #aac4ff; font-size: 11px; }
+.ticker-value { font-weight: 700; color: #fff; }
+.ticker-up { color: #00e5b0; }
+.ticker-down { color: #ff6b6b; }
+.ticker-neutral { color: #aac4ff; }
+@keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+/* ===== NAVBAR ===== */
+.navbar {
+  background: #fff;
+  border-bottom: 2px solid var(--borde);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 12px rgba(10,37,64,0.07);
+}
+.navbar-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 20px;
+  height: 60px;
+}
+.logo {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--azul);
+  letter-spacing: -0.03em;
+  margin-right: 28px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.logo span { color: var(--celeste); }
+.nav-links {
+  display: flex;
+  gap: 0;
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav-links::-webkit-scrollbar { display: none; }
+.nav-link {
+  padding: 0 14px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-secundario);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.18s;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.nav-link:hover, .nav-link.active {
+  color: var(--celeste);
+  border-bottom-color: var(--celeste);
+  background: var(--gris-claro);
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.btn {
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.18s;
+  font-family: 'Sora', sans-serif;
+}
+.btn-primary { background: var(--celeste); color: #fff; }
+.btn-primary:hover { background: var(--azul); }
+.btn-outline { background: transparent; color: var(--celeste); border: 1.5px solid var(--celeste); }
+.btn-outline:hover { background: var(--gris-claro); }
+.btn-oro { background: var(--oro); color: #fff; }
+.btn-oro:hover { background: #e09510; }
+.btn-verde { background: var(--verde); color: #fff; }
+.btn-verde:hover { background: #00a87c; }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn-lg { padding: 12px 28px; font-size: 15px; }
+
+/* ===== HERO/SECTION BANNER ===== */
+.hero-banner {
+  background: linear-gradient(135deg, var(--azul) 0%, #1a3a7a 60%, var(--celeste) 100%);
+  color: #fff;
+  padding: 64px 20px 56px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-banner h1 { font-size: 38px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 12px; position: relative; }
+.hero-banner p { font-size: 16px; opacity: 0.85; max-width: 560px; margin: 0 auto 28px; position: relative; }
+.hero-banner .btn { position: relative; }
+.hero-subtitle { font-size: 13px; opacity: 0.6; margin-top: 20px; position: relative; }
+
+/* ===== PAGES GRID ===== */
+.pages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+.page-card {
+  background: var(--tarjeta);
+  border-radius: var(--radio);
+  border: 1.5px solid var(--borde);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--sombra);
+}
+.page-card:hover { transform: translateY(-4px); box-shadow: var(--sombra-fuerte); border-color: var(--celeste-claro); }
+.page-card-img {
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+}
+.page-card-body { padding: 14px 16px; }
+.page-card-body h3 { font-size: 14px; font-weight: 700; color: var(--azul); margin-bottom: 4px; }
+.page-card-body p { font-size: 12px; color: var(--texto-secundario); line-height: 1.4; }
+
+/* ===== CONTAINER ===== */
+.container { max-width: 1280px; margin: 0 auto; padding: 32px 20px; }
+.container-sm { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
+
+/* ===== SECTION TITLE ===== */
+.section-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--azul);
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+.section-sub {
+  font-size: 13px;
+  color: var(--texto-secundario);
+  margin-bottom: 24px;
+}
+.divider {
+  width: 40px;
+  height: 4px;
+  background: var(--celeste);
+  border-radius: 2px;
+  margin-bottom: 16px;
+}
+
+/* ===== NEWS GRID ===== */
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+.news-card {
+  background: var(--tarjeta);
+  border-radius: var(--radio);
+  border: 1.5px solid var(--borde);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--sombra);
+}
+.news-card:hover { transform: translateY(-3px); box-shadow: var(--sombra-fuerte); }
+.news-card-img {
+  height: 160px;
+  background: linear-gradient(135deg, var(--azul), var(--celeste));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  position: relative;
+}
+.news-card-category {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--oro);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 9px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+.news-card-body { padding: 16px; }
+.news-card-title { font-size: 14px; font-weight: 700; color: var(--azul); margin-bottom: 6px; line-height: 1.4; }
+.news-card-desc { font-size: 12px; color: var(--texto-secundario); margin-bottom: 10px; }
+.news-card-meta { font-size: 11px; color: var(--gris-medio); display: flex; gap: 10px; }
+
+/* ===== MARKET TABLE ===== */
+.market-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.market-tab {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid var(--borde);
+  background: #fff;
+  color: var(--texto-secundario);
+  transition: all 0.15s;
+}
+.market-tab.active, .market-tab:hover {
+  background: var(--celeste);
+  color: #fff;
+  border-color: var(--celeste);
+}
+.table-wrap {
+  background: var(--tarjeta);
+  border-radius: var(--radio-grande);
+  border: 1.5px solid var(--borde);
+  overflow: hidden;
+  box-shadow: var(--sombra);
+}
+table { width: 100%; border-collapse: collapse; }
+thead { background: var(--azul); }
+thead th {
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #aac4ff;
+  text-align: left;
+}
+thead th:not(:first-child) { text-align: right; }
+tbody tr {
+  border-bottom: 1px solid var(--borde);
+  transition: background 0.12s;
+}
+tbody tr:hover { background: var(--gris-claro); }
+tbody tr:last-child { border-bottom: none; }
+td {
+  padding: 12px 16px;
+  font-size: 13px;
+  text-align: right;
+  font-family: 'DM Mono', monospace;
+}
+td:first-child { text-align: left; font-family: 'Sora', sans-serif; font-weight: 600; }
+.up { color: var(--verde); font-weight: 700; }
+.down { color: var(--rojo); font-weight: 700; }
+.neutral { color: var(--gris-medio); }
+.ticker-sym { font-size: 11px; color: var(--gris-medio); display: block; }
+
+/* ===== CHART PLACEHOLDER ===== */
+.chart-box {
+  background: var(--tarjeta);
+  border-radius: var(--radio-grande);
+  border: 1.5px solid var(--borde);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--sombra);
+}
+.chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+.chart-title { font-size: 16px; font-weight: 700; color: var(--azul); }
+.chart-price { font-size: 28px; font-weight: 800; color: var(--azul); font-family: 'DM Mono', monospace; }
+.chart-change { font-size: 14px; font-weight: 600; }
+.chart-canvas-wrap {
+  height: 220px;
+  background: linear-gradient(180deg, rgba(26,92,255,0.07) 0%, rgba(26,92,255,0) 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  position: relative;
+}
+.chart-svg { width: 100%; height: 100%; }
+.time-tabs { display: flex; gap: 4px; }
+.time-tab {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--gris-medio);
+  transition: all 0.15s;
+  border: none;
+  background: none;
+  font-family: 'Sora', sans-serif;
+}
+.time-tab.active { background: var(--celeste); color: #fff; }
+
+/* ===== SEARCH BAR ===== */
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.search-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 11px 16px;
+  border-radius: 10px;
+  border: 1.5px solid var(--borde);
+  font-size: 14px;
+  font-family: 'Sora', sans-serif;
+  outline: none;
+  background: #fff;
+  transition: border 0.15s;
+}
+.search-input:focus { border-color: var(--celeste); }
+.filter-select {
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1.5px solid var(--borde);
+  font-size: 13px;
+  font-family: 'Sora', sans-serif;
+  background: #fff;
+  color: var(--texto);
+  outline: none;
+  cursor: pointer;
+}
+
+/* ===== LISTING CARDS ===== */
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+.listing-card {
+  background: var(--tarjeta);
+  border-radius: var(--radio);
+  border: 1.5px solid var(--borde);
+  padding: 20px;
+  transition: all 0.2s;
+  box-shadow: var(--sombra);
+  cursor: pointer;
+}
+.listing-card:hover { transform: translateY(-3px); box-shadow: var(--sombra-fuerte); border-color: var(--celeste-claro); }
+.listing-tag {
+  display: inline-block;
+  background: var(--gris-claro);
+  color: var(--celeste);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.listing-title { font-size: 15px; font-weight: 700; color: var(--azul); margin-bottom: 6px; }
+.listing-desc { font-size: 13px; color: var(--texto-secundario); margin-bottom: 12px; }
+.listing-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--gris-medio);
+}
+.listing-meta span { display: flex; align-items: center; gap: 4px; }
+.badge {
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.badge-verde { background: #e0fff6; color: var(--verde); }
+.badge-azul { background: #e0eaff; color: var(--celeste); }
+.badge-oro { background: #fff3d6; color: var(--oro); }
+.badge-rojo { background: #ffe0e0; color: var(--rojo); }
+
+/* ===== PROFILE ===== */
+.profile-menu {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--borde);
+  margin-bottom: 28px;
+  overflow-x: auto;
+}
+.profile-tab {
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-secundario);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.profile-tab.active { color: var(--celeste); border-bottom-color: var(--celeste); }
+.profile-tab:hover { color: var(--celeste); }
+.profile-content { display: none; }
+.profile-content.active { display: block; }
+.form-group { margin-bottom: 18px; }
+.form-label { font-size: 12px; font-weight: 700; color: var(--texto-secundario); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; display: block; }
+.form-input {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1.5px solid var(--borde);
+  font-size: 14px;
+  font-family: 'Sora', sans-serif;
+  outline: none;
+  background: #fff;
+  transition: border 0.15s;
+}
+.form-input:focus { border-color: var(--celeste); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media(max-width:600px) { .form-row { grid-template-columns: 1fr; } }
+
+/* ===== STATS ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--tarjeta);
+  border-radius: var(--radio);
+  border: 1.5px solid var(--borde);
+  padding: 18px 20px;
+  box-shadow: var(--sombra);
+}
+.stat-label { font-size: 11px; font-weight: 700; color: var(--gris-medio); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 6px; }
+.stat-value { font-size: 26px; font-weight: 800; color: var(--azul); font-family: 'DM Mono', monospace; }
+.stat-sub { font-size: 11px; color: var(--texto-secundario); margin-top: 2px; }
+
+/* ===== LOGIN ===== */
+.login-box {
+  max-width: 440px;
+  margin: 60px auto;
+  background: var(--tarjeta);
+  border-radius: var(--radio-grande);
+  border: 1.5px solid var(--borde);
+  padding: 40px 36px;
+  box-shadow: var(--sombra-fuerte);
+}
+.login-box h2 { font-size: 26px; font-weight: 800; color: var(--azul); margin-bottom: 6px; }
+.login-box p { font-size: 14px; color: var(--texto-secundario); margin-bottom: 28px; }
+.social-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1.5px solid var(--borde);
+  background: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto);
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 10px;
+  font-family: 'Sora', sans-serif;
+}
+.social-btn:hover { border-color: var(--celeste); background: var(--gris-claro); }
+.divider-text {
+  text-align: center;
+  font-size: 12px;
+  color: var(--gris-medio);
+  margin: 16px 0;
+  position: relative;
+}
+.divider-text::before, .divider-text::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: var(--borde);
+}
+.divider-text::before { left: 0; }
+.divider-text::after { right: 0; }
+
+/* ===== CROWDFUNDING ===== */
+.crowd-card {
+  background: var(--tarjeta);
+  border-radius: var(--radio);
+  border: 1.5px solid var(--borde);
+  padding: 22px;
+  margin-bottom: 16px;
+  box-shadow: var(--sombra);
+  transition: all 0.2s;
+}
+.crowd-card:hover { box-shadow: var(--sombra-fuerte); }
+.progress-bar-wrap { background: var(--gris-claro); border-radius: 8px; height: 8px; margin: 10px 0; overflow: hidden; }
+.progress-bar { height: 100%; border-radius: 8px; background: linear-gradient(90deg, var(--celeste), var(--verde)); }
+.crowd-amounts { display: flex; justify-content: space-between; font-size: 12px; color: var(--gris-medio); }
+
+/* ===== JOB CARD ===== */
+.job-card {
+  background: var(--tarjeta);
+  border-radius: var(--radio);
+  border: 1.5px solid var(--borde);
+  padding: 20px;
+  margin-bottom: 14px;
+  box-shadow: var(--sombra);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.job-card:hover { box-shadow: var(--sombra-fuerte); border-color: var(--celeste-claro); }
+.job-logo {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--azul), var(--celeste));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.job-info { flex: 1; }
+.job-title { font-size: 15px; font-weight: 700; color: var(--azul); margin-bottom: 3px; }
+.job-company { font-size: 13px; color: var(--texto-secundario); margin-bottom: 8px; }
+.job-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.job-tag { padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600; background: var(--gris-claro); color: var(--texto-secundario); }
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--azul);
+  color: rgba(255,255,255,0.7);
+  padding: 48px 20px 24px;
+  margin-top: 48px;
+}
+.footer-inner { max-width: 1280px; margin: 0 auto; }
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 28px;
+  margin-bottom: 36px;
+}
+.footer-col h4 { color: #fff; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; }
+.footer-link {
+  display: block;
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.footer-link:hover { color: #fff; }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: gap;
+  gap: 12px;
+  font-size: 12px;
+}
+
+/* ===== MODALS & OVERLAYS ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,37,64,0.5);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.show { display: flex; }
+.modal-box {
+  background: #fff;
+  border-radius: var(--radio-grande);
+  padding: 32px;
+  max-width: 540px;
+  width: 100%;
+  box-shadow: var(--sombra-fuerte);
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: var(--gris-claro);
+  border: none;
+  border-radius: 50%;
+  width: 32px; height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--texto);
+}
+
+/* ===== FUEL TABLE ===== */
+.fuel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.fuel-card {
+  background: var(--tarjeta);
+  border-radius: var(--radio);
+  border: 1.5px solid var(--borde);
+  padding: 18px;
+  box-shadow: var(--sombra);
+  text-align: center;
+}
+.fuel-icon { font-size: 36px; margin-bottom: 8px; }
+.fuel-name { font-size: 12px; font-weight: 700; color: var(--gris-medio); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; }
+.fuel-price { font-size: 24px; font-weight: 800; color: var(--azul); font-family: 'DM Mono', monospace; }
+.fuel-sub { font-size: 11px; color: var(--texto-secundario); }
+
+/* ===== COMMODITY PRICES ===== */
+.commodity-strip {
+  background: var(--tarjeta);
+  border: 1.5px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 16px 20px;
+  display: flex;
+  gap: 28px;
+  overflow-x: auto;
+  margin-bottom: 24px;
+  box-shadow: var(--sombra);
+}
+.commodity-item { text-align: center; flex-shrink: 0; }
+.commodity-name { font-size: 11px; font-weight: 700; color: var(--gris-medio); letter-spacing: 0.07em; text-transform: uppercase; }
+.commodity-value { font-size: 18px; font-weight: 800; color: var(--azul); font-family: 'DM Mono', monospace; }
+.commodity-unit { font-size: 10px; color: var(--gris-medio); }
+
+/* ===== NOTIFICATION ===== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--azul);
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: var(--sombra-fuerte);
+  z-index: 3000;
+  transform: translateY(80px);
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(.22,1,.36,1);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ===== INDUSTRY CARDS ===== */
+.industry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.industry-card {
+  background: var(--tarjeta);
+  border-radius: var(--radio);
+  border: 1.5px solid var(--borde);
+  padding: 20px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--sombra);
+}
+.industry-card:hover { border-color: var(--celeste); background: var(--gris-claro); transform: translateY(-2px); }
+.industry-icon { font-size: 38px; margin-bottom: 8px; }
+.industry-name { font-size: 13px; font-weight: 700; color: var(--azul); }
+.industry-count { font-size: 11px; color: var(--gris-medio); }
+
+/* ===== NEWS COUNT BADGES ===== */
+.news-cnt {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gris-medio);
+  margin-left: 3px;
+}
+
+/* ===== DROPDOWN MENU ===== */
+.dropdown { position: relative; }
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  border: 1.5px solid var(--borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-fuerte);
+  z-index: 900;
+  min-width: 220px;
+  display: none;
+  padding: 6px;
+}
+.dropdown:hover .dropdown-menu { display: block; }
+.dropdown-item {
+  display: block;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--texto);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.12s;
+}
+.dropdown-item:hover { background: var(--gris-claro); color: var(--celeste); }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ Acción realizada con éxito</div>
+
+<!-- MODAL LOGIN -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+    <h2>Ingresá a ArgentinaBiz</h2>
+    <p>Accedé con tu cuenta para participar en el ecosistema</p>
+    <button class="social-btn" onclick="fakeLogin()">
+      <span style="font-size:20px">🔵</span> Continuar con Google
+    </button>
+    <button class="social-btn" onclick="fakeLogin()">
+      <span style="font-size:20px">📘</span> Continuar con Facebook/Meta
+    </button>
+    <button class="social-btn" onclick="fakeLogin()">
+      <span style="font-size:20px">⬛</span> Continuar con Apple
+    </button>
+    <div class="divider-text">o con tu email</div>
+    <div class="form-group">
+      <input class="form-input" type="email" placeholder="tu@email.com">
+    </div>
+    <div class="form-group">
+      <input class="form-input" type="password" placeholder="Contraseña">
+    </div>
+    <button class="btn btn-primary" style="width:100%;padding:13px" onclick="fakeLogin()">Iniciar sesión</button>
+    <p style="text-align:center;margin-top:14px;font-size:13px;color:var(--gris-medio)">¿No tenés cuenta? <a href="#" onclick="fakeLogin()" style="color:var(--celeste);font-weight:600">Registrate gratis</a></p>
+  </div>
+</div>
+
+<!-- ADS BANNER -->
+<div class="ads-banner">
+  📢 <span>Espacio publicitario · Google Ads</span> — Tu empresa puede aparecer aquí · <a href="#" style="color:var(--celeste);font-weight:700;text-decoration:none">Anunciar</a>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-bar">
+  <div class="ticker-label">🇦🇷 EN VIVO</div>
+  <div style="overflow:hidden;flex:1">
+    <div class="ticker-track" id="tickerTrack">
+      <!-- duplicated for infinite loop -->
+      <div class="ticker-item"><span class="ticker-name">USD BLUE</span><span class="ticker-value">$1.415</span><span class="ticker-down">▼-0.7%</span></div>
+      <div class="ticker-item"><span class="ticker-name">USD OFICIAL</span><span class="ticker-value">$1.390</span><span class="ticker-up">▲+1.1%</span></div>
+      <div class="ticker-item"><span class="ticker-name">USD MEP</span><span class="ticker-value">$1.427</span><span class="ticker-up">▲+1.9%</span></div>
+      <div class="ticker-item"><span class="ticker-name">CCL</span><span class="ticker-value">$1.480</span><span class="ticker-up">▲+2.5%</span></div>
+      <div class="ticker-item"><span class="ticker-name">MERVAL USD</span><span class="ticker-value">$2.185</span><span class="ticker-up">▲+0.8%</span></div>
+      <div class="ticker-item"><span class="ticker-name">SPY</span><span class="ticker-value">$547.2</span><span class="ticker-down">▼-0.4%</span></div>
+      <div class="ticker-item"><span class="ticker-name">BTC</span><span class="ticker-value">$85.420</span><span class="ticker-down">▼-1.2%</span></div>
+      <div class="ticker-item"><span class="ticker-name">SOJA</span><span class="ticker-value">$372/tn</span><span class="ticker-up">▲+0.5%</span></div>
+      <div class="ticker-item"><span class="ticker-name">MAÍZ</span><span class="ticker-value">$182/tn</span><span class="ticker-neutral">0.0%</span></div>
+      <div class="ticker-item"><span class="ticker-name">PETRÓLEO WTI</span><span class="ticker-value">$101.4</span><span class="ticker-up">▲+3.1%</span></div>
+      <div class="ticker-item"><span class="ticker-name">NAFTA SÚPER</span><span class="ticker-value">$1.920/L</span><span class="ticker-down">▼YPF CABA</span></div>
+      <div class="ticker-item"><span class="ticker-name">GASOIL</span><span class="ticker-value">$2.128/L</span><span class="ticker-neutral">YPF CABA</span></div>
+      <!-- duplicado para loop continuo -->
+      <div class="ticker-item"><span class="ticker-name">USD BLUE</span><span class="ticker-value">$1.415</span><span class="ticker-down">▼-0.7%</span></div>
+      <div class="ticker-item"><span class="ticker-name">USD OFICIAL</span><span class="ticker-value">$1.390</span><span class="ticker-up">▲+1.1%</span></div>
+      <div class="ticker-item"><span class="ticker-name">USD MEP</span><span class="ticker-value">$1.427</span><span class="ticker-up">▲+1.9%</span></div>
+      <div class="ticker-item"><span class="ticker-name">CCL</span><span class="ticker-value">$1.480</span><span class="ticker-up">▲+2.5%</span></div>
+      <div class="ticker-item"><span class="ticker-name">MERVAL USD</span><span class="ticker-value">$2.185</span><span class="ticker-up">▲+0.8%</span></div>
+      <div class="ticker-item"><span class="ticker-name">SPY</span><span class="ticker-value">$547.2</span><span class="ticker-down">▼-0.4%</span></div>
+      <div class="ticker-item"><span class="ticker-name">BTC</span><span class="ticker-value">$85.420</span><span class="ticker-down">▼-1.2%</span></div>
+      <div class="ticker-item"><span class="ticker-name">SOJA</span><span class="ticker-value">$372/tn</span><span class="ticker-up">▲+0.5%</span></div>
+      <div class="ticker-item"><span class="ticker-name">MAÍZ</span><span class="ticker-value">$182/tn</span><span class="ticker-neutral">0.0%</span></div>
+      <div class="ticker-item"><span class="ticker-name">PETRÓLEO WTI</span><span class="ticker-value">$101.4</span><span class="ticker-up">▲+3.1%</span></div>
+      <div class="ticker-item"><span class="ticker-name">NAFTA SÚPER</span><span class="ticker-value">$1.920/L</span><span class="ticker-down">▼YPF CABA</span></div>
+      <div class="ticker-item"><span class="ticker-name">GASOIL</span><span class="ticker-value">$2.128/L</span><span class="ticker-neutral">YPF CABA</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <div class="logo" onclick="navigate('inicio')">Argentina<span>Biz</span></div>
+    <div class="nav-links">
+      <div class="nav-link active" onclick="navigate('inicio')">Inicio</div>
+      <div class="nav-link" onclick="navigate('noticias')">Noticias</div>
+      <div class="nav-link dropdown" onclick="navigate('mercados')">
+        Mercados ▾
+        <div class="dropdown-menu">
+          <div class="dropdown-item" onclick="navigate('mercados')">ETFs y Fondos</div>
+          <div class="dropdown-item" onclick="navigate('mercados')">Acciones Merval</div>
+          <div class="dropdown-item" onclick="navigate('mercados')">Panel General</div>
+          <div class="dropdown-item" onclick="navigate('mercados')">ADRs Argentina</div>
+          <div class="dropdown-item" onclick="navigate('mercados')">S&P 500</div>
+          <div class="dropdown-item" onclick="navigate('mercados')">Industrias</div>
+        </div>
+      </div>
+      <div class="nav-link" onclick="navigate('crowdfunding')">Crowdfunding</div>
+      <div class="nav-link" onclick="navigate('asociaciones')">Asociaciones</div>
+      <div class="nav-link" onclick="navigate('servicios')">Servicios</div>
+      <div class="nav-link" onclick="navigate('trabajo')">Bolsa de Trabajo</div>
+    </div>
+    <div class="nav-right">
+      <button class="btn btn-outline btn-sm" onclick="showModal('loginModal')">Ingresar</button>
+      <button class="btn btn-primary btn-sm" onclick="fakeLogin()">Registrarse</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- PÁGINA: INICIO -->
+<!-- ============================================================ -->
+<div class="page active" id="page-inicio">
+  <!-- Hero -->
+  <div class="hero-banner">
+    <h1>El ecosistema empresarial<br>argentino en un solo lugar</h1>
+    <p>Mercados, oportunidades, financiamiento, empleo y socios de negocios para impulsar Argentina.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-oro btn-lg" onclick="navigate('mercados')">Ver Mercados →</button>
+      <button class="btn btn-outline btn-lg" style="color:#fff;border-color:rgba(255,255,255,0.4)" onclick="showModal('loginModal')">Crear cuenta gratis</button>
+    </div>
+    <p class="hero-subtitle">Actualización en tiempo real · Datos al 29/03/2026</p>
+  </div>
+
+  <!-- Pages Grid -->
+  <div class="container">
+    <div class="divider"></div>
+    <div class="section-title">Explorá el ecosistema</div>
+    <div class="section-sub">Todas las herramientas para hacer crecer tu negocio en Argentina</div>
+    <div class="pages-grid">
+      <div class="page-card" onclick="navigate('noticias')">
+        <div class="page-card-img" style="background:linear-gradient(135deg,#0a2540,#1a5cff)">📰</div>
+        <div class="page-card-body"><h3>Noticias</h3><p>Economía, mercados y negocios de las últimas 48 hs</p></div>
+      </div>
+      <div class="page-card" onclick="navigate('mercados')">
+        <div class="page-card-img" style="background:linear-gradient(135deg,#1a3a7a,#00c896)">📈</div>
+        <div class="page-card-body"><h3>Mercados e Industrias</h3><p>Acciones, ETFs, ADRs, Merval y más</p></div>
+      </div>
+      <div class="page-card" onclick="navigate('crowdfunding')">
+        <div class="page-card-img" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">🤝</div>
+        <div class="page-card-body"><h3>Crowdfunding</h3><p>Financiá o conseguí financiamiento entre particulares</p></div>
+      </div>
+      <div class="page-card" onclick="navigate('asociaciones')">
+        <div class="page-card-img" style="background:linear-gradient(135deg,#f5a623,#ff6b00)">🏢</div>
+        <div class="page-card-body"><h3>Asociaciones</h3><p>Encontrá socios para tu emprendimiento</p></div>
+      </div>
+      <div class="page-card" onclick="navigate('servicios')">
+        <div class="page-card-img" style="background:linear-gradient(135deg,#0a8a6a,#00c896)">🛠️</div>
+        <div class="page-card-body"><h3>Servicios B2B</h3><p>Marketplace de servicios para empresas</p></div>
+      </div>
+      <div class="page-card" onclick="navigate('trabajo')">
+        <div class="page-card-img" style="background:linear-gradient(135deg,#2563eb,#60a5fa)">💼</div>
+        <div class="page-card-body"><h3>Bolsa de Trabajo</h3><p>Búsqueda laboral orientada por habilidades</p></div>
+      </div>
+      <div class="page-card" onclick="navigate('perfil')">
+        <div class="page-card-img" style="background:linear-gradient(135deg,#374151,#6b7280)">👤</div>
+        <div class="page-card-body"><h3>Mi Perfil</h3><p>Tus datos, estadísticas y configuración</p></div>
+      </div>
+      <div class="page-card" onclick="navigate('opciones')">
+        <div class="page-card-img" style="background:linear-gradient(135deg,#0a2540,#1a5cff)">⚙️</div>
+        <div class="page-card-body"><h3>Opciones</h3><p>Personalizá tu experiencia en la plataforma</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Noticias destacadas -->
+  <div class="container">
+    <div class="divider"></div>
+    <div class="section-title">Noticias destacadas</div>
+    <div class="section-sub">Economía argentina · Últimas 48 hs</div>
+    <div class="news-grid">
+      <div class="news-card" onclick="navigate('noticias')">
+        <div class="news-card-img" style="background:linear-gradient(135deg,#0a2540,#1a5cff)">⚡<div class="news-card-category">Energía</div></div>
+        <div class="news-card-body">
+          <div class="news-card-title">Nafta súper supera $2.000/L en CABA tras suba del 20% por conflicto en Medio Oriente</div>
+          <div class="news-card-desc">YPF, Shell y Axion ajustaron precios en línea con el alza del crudo internacional a USD 101.</div>
+          <div class="news-card-meta"><span>📅 Hoy, 11:35</span><span>📰 Infobae</span></div>
+        </div>
+      </div>
+      <div class="news-card" onclick="navigate('noticias')">
+        <div class="news-card-img" style="background:linear-gradient(135deg,#1a3a7a,#00c896)">💵<div class="news-card-category">Dólar</div></div>
+        <div class="news-card-body">
+          <div class="news-card-title">Dólar blue cierra en $1.415: la brecha con el oficial se mantiene mínima al 1,8%</div>
+          <div class="news-card-desc">El mercado paralelo muestra calma con el tipo de cambio más bajo del año frente a la banda de flotación.</div>
+          <div class="news-card-meta"><span>📅 Ayer, 21:29</span><span>📰 Cronista</span></div>
+        </div>
+      </div>
+      <div class="news-card" onclick="navigate('noticias')">
+        <div class="news-card-img" style="background:linear-gradient(135deg,#7c3aed,#c4b5fd)">📊<div class="news-card-category">Mercados</div></div>
+        <div class="news-card-body">
+          <div class="news-card-title">Merval sube 0.8% en dólares: bancos y energéticas lideran las ganancias</div>
+          <div class="news-card-desc">El índice bursátil local marca nuevos máximos históricos en moneda dura, traccionado por el sector financiero.</div>
+          <div class="news-card-meta"><span>📅 Hoy, 18:10</span><span>📰 Ámbito</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:24px">
+      <button class="btn btn-outline" onclick="navigate('noticias')">Ver todas las noticias →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PÁGINA: NOTICIAS (RSS EN VIVO) -->
+<!-- ============================================================ -->
+<div class="page" id="page-noticias">
+  <div class="hero-banner" style="padding:40px 20px 36px">
+    <h1 style="font-size:30px">📰 Noticias · Argentina</h1>
+    <p>Economía, mercados, negocios y finanzas públicas · Últimas 48 horas · Fuentes oficiales</p>
+  </div>
+  <div class="container">
+
+    <!-- BARRA BÚSQUEDA -->
+    <div class="search-bar" style="margin-bottom:16px">
+      <input class="search-input" id="newsSearch" placeholder="🔍 Buscar en las noticias cargadas..." oninput="filterNews()">
+      <select class="filter-select" id="newsSource" onchange="filterNews()">
+        <option value="">Todas las fuentes</option>
+        <option value="Infobae">Infobae</option>
+        <option value="Ámbito">Ámbito Financiero</option>
+        <option value="Cronista">El Cronista</option>
+        <option value="Economista">El Economista</option>
+      </select>
+      <button class="btn btn-outline btn-sm" onclick="loadAllNews()" title="Recargar noticias">↻ Actualizar</button>
+    </div>
+
+    <!-- CATEGORÍAS CON CONTADORES -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;align-items:center">
+      <span style="font-size:12px;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.06em;margin-right:4px">Categoría:</span>
+      <button class="market-tab active" onclick="setCatFilter('',this)" id="cat-all">Todas <span id="cnt-all" class="news-cnt">—</span></button>
+      <button class="market-tab" onclick="setCatFilter('Economía',this)">Economía <span id="cnt-Economía" class="news-cnt">—</span></button>
+      <button class="market-tab" onclick="setCatFilter('Dólar',this)">Dólar <span id="cnt-Dólar" class="news-cnt">—</span></button>
+      <button class="market-tab" onclick="setCatFilter('Mercados',this)">Mercados <span id="cnt-Mercados" class="news-cnt">—</span></button>
+      <button class="market-tab" onclick="setCatFilter('Energía',this)">Energía <span id="cnt-Energía" class="news-cnt">—</span></button>
+      <button class="market-tab" onclick="setCatFilter('Agro',this)">Agro <span id="cnt-Agro" class="news-cnt">—</span></button>
+      <button class="market-tab" onclick="setCatFilter('Empresas',this)">Empresas <span id="cnt-Empresas" class="news-cnt">—</span></button>
+    </div>
+
+    <!-- STATUS BAR -->
+    <div id="newsStatus" style="font-size:12px;color:var(--gris-medio);margin-bottom:16px;min-height:20px">
+      ⏳ Cargando noticias desde las fuentes...
+    </div>
+
+    <!-- GRID DE NOTICIAS -->
+    <div class="news-grid" id="newsGrid">
+      <!-- Se llena dinámicamente con JS -->
+    </div>
+
+    <div id="newsEmpty" style="display:none;text-align:center;padding:40px;color:var(--gris-medio)">
+      <div style="font-size:40px;margin-bottom:12px">📭</div>
+      <div style="font-size:15px;font-weight:600">No se encontraron noticias con ese filtro</div>
+      <div style="font-size:13px;margin-top:6px">Probá cambiar la búsqueda o la categoría</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PÁGINA: MERCADOS -->
+<!-- ============================================================ -->
+<div class="page" id="page-mercados">
+  <div class="hero-banner" style="padding:40px 20px 36px">
+    <h1 style="font-size:30px">Mercados e Industrias</h1>
+    <p>Cotizaciones en tiempo real · Registrate para acceder a datos avanzados</p>
+  </div>
+  <div class="container">
+
+    <!-- Combustibles -->
+    <div class="divider"></div>
+    <div class="section-title">⛽ Combustibles · CABA (marzo 2026)</div>
+    <div class="section-sub">Fuente: Observatorio IIEP UBA-CONICET · Infobae · Actualización semanal</div>
+    <div class="fuel-grid">
+      <div class="fuel-card"><div class="fuel-icon">⛽</div><div class="fuel-name">Nafta Súper · YPF</div><div class="fuel-price">$1.920</div><div class="fuel-sub">por litro · CABA</div></div>
+      <div class="fuel-card"><div class="fuel-icon">🏎️</div><div class="fuel-name">Infinia (Premium) · YPF</div><div class="fuel-price">$2.145</div><div class="fuel-sub">por litro · CABA</div></div>
+      <div class="fuel-card"><div class="fuel-icon">🚛</div><div class="fuel-name">Gasoil 500 · YPF</div><div class="fuel-price">$1.867</div><div class="fuel-sub">por litro · CABA</div></div>
+      <div class="fuel-card"><div class="fuel-icon">💎</div><div class="fuel-name">Infinia Diesel · YPF</div><div class="fuel-price">$2.128</div><div class="fuel-sub">por litro · CABA</div></div>
+      <div class="fuel-card"><div class="fuel-icon">🐚</div><div class="fuel-name">V-Power · Shell</div><div class="fuel-price">$2.199</div><div class="fuel-sub">por litro · CABA</div></div>
+      <div class="fuel-card"><div class="fuel-icon">🌿</div><div class="fuel-name">GNC</div><div class="fuel-price">~$220</div><div class="fuel-sub">por m³ · CABA</div></div>
+    </div>
+
+    <!-- Tipos de cambio -->
+    <div class="divider"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px">
+      <div class="section-title" style="margin:0">💵 Tipos de Cambio</div>
+      <div style="font-size:11px;color:var(--gris-medio)" id="dolarTimestamp">Fuente: dolarapi.com · Cargando...</div>
+    </div>
+    <div class="commodity-strip" id="dolarStrip">
+      <div class="commodity-item"><div class="commodity-name">Blue Compra</div><div class="commodity-value" id="d-blue-c">—</div><div class="commodity-unit">ARS</div></div>
+      <div class="commodity-item"><div class="commodity-name">Blue Venta</div><div class="commodity-value" id="d-blue-v">—</div><div class="commodity-unit">ARS</div></div>
+      <div class="commodity-item"><div class="commodity-name">Oficial BNA</div><div class="commodity-value" id="d-oficial-v">—</div><div class="commodity-unit">ARS</div></div>
+      <div class="commodity-item"><div class="commodity-name">MEP</div><div class="commodity-value" id="d-mep-v">—</div><div class="commodity-unit">ARS</div></div>
+      <div class="commodity-item"><div class="commodity-name">CCL</div><div class="commodity-value" id="d-ccl-v">—</div><div class="commodity-unit">ARS</div></div>
+      <div class="commodity-item"><div class="commodity-name">Tarjeta</div><div class="commodity-value" id="d-tarjeta-v">—</div><div class="commodity-unit">ARS</div></div>
+      <div class="commodity-item"><div class="commodity-name">Euro</div><div class="commodity-value" id="d-euro-v">—</div><div class="commodity-unit">ARS</div></div>
+      <div class="commodity-item"><div class="commodity-name">Cripto</div><div class="commodity-value" id="d-cripto-v">—</div><div class="commodity-unit">ARS</div></div>
+    </div>
+
+    <!-- Commodities -->
+    <div class="divider"></div>
+    <div class="section-title">🌾 Commodities estratégicos</div>
+    <div class="commodity-strip">
+      <div class="commodity-item"><div class="commodity-name">Soja CBOT</div><div class="commodity-value">$372</div><div class="commodity-unit">USD/tn</div></div>
+      <div class="commodity-item"><div class="commodity-name">Maíz CBOT</div><div class="commodity-value">$182</div><div class="commodity-unit">USD/tn</div></div>
+      <div class="commodity-item"><div class="commodity-name">Trigo CBOT</div><div class="commodity-value">$214</div><div class="commodity-unit">USD/tn</div></div>
+      <div class="commodity-item"><div class="commodity-name">Petróleo WTI</div><div class="commodity-value">$101.4</div><div class="commodity-unit">USD/barril</div></div>
+      <div class="commodity-item"><div class="commodity-name">Petróleo Brent</div><div class="commodity-value">$107.2</div><div class="commodity-unit">USD/barril</div></div>
+      <div class="commodity-item"><div class="commodity-name">Oro</div><div class="commodity-value">$3.042</div><div class="commodity-unit">USD/oz</div></div>
+      <div class="commodity-item"><div class="commodity-name">Cobre</div><div class="commodity-value">$4.76</div><div class="commodity-unit">USD/lb</div></div>
+    </div>
+
+    <!-- Market Tabs -->
+    <div class="divider"></div>
+    <div class="section-title">📊 Activos financieros</div>
+    <div class="market-tabs">
+      <div class="market-tab active" onclick="switchTab(this,'merval')">Merval</div>
+      <div class="market-tab" onclick="switchTab(this,'adrs')">ADRs</div>
+      <div class="market-tab" onclick="switchTab(this,'etfs')">ETFs</div>
+      <div class="market-tab" onclick="switchTab(this,'spy')">S&P500</div>
+      <div class="market-tab" onclick="switchTab(this,'crypto')">Crypto</div>
+    </div>
+
+    <!-- Chart box -->
+    <div class="chart-box">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title" id="chartTitle">S&P Merval — Índice en USD</div>
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <div class="chart-price" id="chartPrice">2.185</div>
+            <div class="chart-change up" id="chartChange">▲ +0.8% hoy</div>
+          </div>
+        </div>
+        <div class="time-tabs">
+          <button class="time-tab active">1D</button>
+          <button class="time-tab">1S</button>
+          <button class="time-tab">1M</button>
+          <button class="time-tab">YTD</button>
+          <button class="time-tab">1A</button>
+        </div>
+      </div>
+      <div class="chart-canvas-wrap">
+        <svg class="chart-svg" viewBox="0 0 800 180" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1a5cff" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#1a5cff" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,120 C50,110 100,130 150,100 C200,70 250,80 300,60 C350,40 400,90 450,70 C500,50 550,40 600,30 C650,20 700,50 750,35 L800,30 L800,180 L0,180Z" fill="url(#chartGrad)"/>
+          <path d="M0,120 C50,110 100,130 150,100 C200,70 250,80 300,60 C350,40 400,90 450,70 C500,50 550,40 600,30 C650,20 700,50 750,35 L800,30" fill="none" stroke="#1a5cff" stroke-width="2.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Table: MERVAL -->
+    <div id="tab-merval">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+        <div><span class="section-title" style="font-size:16px">Acciones Locales — Merval</span>
+        <span style="font-size:11px;color:var(--gris-medio);margin-left:10px" id="merval-ts">Cargando...</span></div>
+        <button class="btn btn-outline btn-sm" onclick="downloadTableExcel('table-merval','Merval_ArgentinaBiz')">⬇ Descargar Excel</button>
+      </div>
+      <div class="table-wrap">
+        <table id="table-merval">
+          <thead>
+            <tr>
+              <th>Empresa</th>
+              <th>Precio</th>
+              <th>Var. día</th>
+              <th>Apertura</th>
+              <th>Máx. día</th>
+              <th>Mín. día</th>
+              <th>Vol.</th>
+            </tr>
+          </thead>
+          <tbody id="body-merval">
+            <tr><td colspan="7" style="text-align:center;padding:28px;color:var(--gris-medio)">⏳ Cargando cotizaciones...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Table: ADRs -->
+    <div id="tab-adrs" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+        <span class="section-title" style="font-size:16px">ADRs — Argentina en NYSE/NASDAQ
+        <span style="font-size:11px;color:var(--gris-medio);margin-left:10px" id="adrs-ts">Cargando...</span></span>
+        <button class="btn btn-outline btn-sm" onclick="downloadTableExcel('table-adrs','ADRs_Argentina')">⬇ Descargar Excel</button>
+      </div>
+      <div class="table-wrap">
+        <table id="table-adrs">
+          <thead><tr><th>Empresa</th><th>Precio (USD)</th><th>Var. día</th><th>Apertura</th><th>Máx. día</th><th>Mín. día</th><th>Vol.</th></tr></thead>
+          <tbody id="body-adrs">
+            <tr><td colspan="7" style="text-align:center;padding:28px;color:var(--gris-medio)">⏳ Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Table: ETFs -->
+    <div id="tab-etfs" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+        <span class="section-title" style="font-size:16px">ETFs y Fondos Indexados</span>
+        <button class="btn btn-outline btn-sm" onclick="downloadTableExcel('table-etfs','ETFs')">⬇ Descargar Excel</button>
+      </div>
+      <div class="table-wrap">
+        <table id="table-etfs">
+          <thead><tr><th>Fondo</th><th>Precio (USD)</th><th>Var. día</th><th>Apertura</th><th>Máx. día</th><th>Mín. día</th><th>Vol.</th></tr></thead>
+          <tbody id="body-etfs">
+            <tr><td colspan="7" style="text-align:center;padding:28px;color:var(--gris-medio)">⏳ Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Table: SPY -->
+    <div id="tab-spy" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+        <span class="section-title" style="font-size:16px">S&P 500 — Principales componentes</span>
+        <button class="btn btn-outline btn-sm" onclick="downloadTableExcel('table-spy','SP500')">⬇ Descargar Excel</button>
+      </div>
+      <div class="table-wrap">
+        <table id="table-spy">
+          <thead><tr><th>Empresa</th><th>Precio (USD)</th><th>Var. día</th><th>Apertura</th><th>Máx. día</th><th>Mín. día</th><th>Vol.</th></tr></thead>
+          <tbody id="body-spy">
+            <tr><td colspan="7" style="text-align:center;padding:28px;color:var(--gris-medio)">⏳ Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Table: Crypto -->
+    <div id="tab-crypto" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+        <span class="section-title" style="font-size:16px">Criptomonedas</span>
+        <button class="btn btn-outline btn-sm" onclick="downloadTableExcel('table-crypto','Crypto')">⬇ Descargar Excel</button>
+      </div>
+      <div class="table-wrap">
+        <table id="table-crypto">
+          <thead><tr><th>Activo</th><th>Precio (USD)</th><th>Var. 24h</th><th>Cap. mercado</th><th>Vol. 24h</th><th>Máx. 24h</th><th>Mín. 24h</th></tr></thead>
+          <tbody id="body-crypto">
+            <tr><td colspan="7" style="text-align:center;padding:28px;color:var(--gris-medio)">⏳ Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Industrias -->
+    <div style="margin-top:40px">
+      <div class="divider"></div>
+      <div class="section-title">🏭 Industrias</div>
+      <div class="section-sub">Explorá sectores clave de la economía argentina</div>
+      <div class="industry-grid">
+        <div class="industry-card" onclick="showToast('Sección en construcción')"><div class="industry-icon">🌾</div><div class="industry-name">Agro</div><div class="industry-count">486 empresas</div></div>
+        <div class="industry-card" onclick="showToast('Sección en construcción')"><div class="industry-icon">⚡</div><div class="industry-name">Energía</div><div class="industry-count">213 empresas</div></div>
+        <div class="industry-card" onclick="showToast('Sección en construcción')"><div class="industry-icon">⛏️</div><div class="industry-name">Minería</div><div class="industry-count">98 empresas</div></div>
+        <div class="industry-card" onclick="showToast('Sección en construcción')"><div class="industry-icon">✈️</div><div class="industry-name">Turismo</div><div class="industry-count">342 empresas</div></div>
+        <div class="industry-card" onclick="showToast('Sección en construcción')"><div class="industry-icon">🏗️</div><div class="industry-name">Construcción</div><div class="industry-count">178 empresas</div></div>
+        <div class="industry-card" onclick="showToast('Sección en construcción')"><div class="industry-icon">💻</div><div class="industry-name">Tecnología</div><div class="industry-count">524 empresas</div></div>
+        <div class="industry-card" onclick="showToast('Sección en construcción')"><div class="industry-icon">🚗</div><div class="industry-name">Automotriz</div><div class="industry-count">87 empresas</div></div>
+        <div class="industry-card" onclick="showToast('Sección en construcción')"><div class="industry-icon">🏥</div><div class="industry-name">Salud</div><div class="industry-count">231 empresas</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PÁGINA: CROWDFUNDING -->
+<!-- ============================================================ -->
+<div class="page" id="page-crowdfunding">
+  <div class="hero-banner" style="padding:40px 20px 36px">
+    <h1 style="font-size:30px">💸 Crowdfunding · Financiamiento P2P</h1>
+    <p>Financiá proyectos o conseguí tu préstamo entre particulares a la tasa que acordés</p>
+  </div>
+  <div class="container">
+    <div style="display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="showModal('loginModal')">+ Publicar solicitud de préstamo</button>
+      <button class="btn btn-outline" onclick="showModal('loginModal')">Quiero financiar</button>
+    </div>
+    <div class="search-bar">
+      <input class="search-input" placeholder="🔍 Buscar solicitudes...">
+      <select class="filter-select"><option>Todas las monedas</option><option>USD</option><option>ARS</option></select>
+      <select class="filter-select"><option>Todos los plazos</option><option>30 días</option><option>60 días</option><option>90 días</option><option>+ 90 días</option></select>
+      <select class="filter-select"><option>Ordenar por</option><option>Tasa más baja</option><option>Mayor monto</option><option>Más reciente</option></select>
+    </div>
+
+    <div class="crowd-card">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <div class="listing-tag">Capital de trabajo</div>
+          <div class="listing-title">Financiamiento para stock de importación — empresa textil</div>
+          <div class="listing-desc">Necesito capital para importar tela de Brasil. Cuento con clientes confirmados. Pago en 90 días al vencimiento del plazo.</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:24px;font-weight:800;color:var(--azul)">USD 8.000</div>
+          <div class="badge badge-verde">Tasa 18% anual USD</div>
+          <div style="font-size:12px;color:var(--gris-medio);margin-top:4px">90 días · Buenos Aires</div>
+        </div>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar" style="width:62%"></div></div>
+      <div class="crowd-amounts"><span>Financiado: USD 4.960 (62%)</span><span>Restante: USD 3.040</span></div>
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="showModal('loginModal')">Financiar este proyecto</button>
+        <button class="btn btn-outline btn-sm">Ver detalles</button>
+        <span style="font-size:12px;color:var(--gris-medio);align-self:center">👤 3 financiadores · Publicado hace 4 días</span>
+      </div>
+    </div>
+
+    <div class="crowd-card">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <div class="listing-tag" style="background:#ffe0e0;color:var(--rojo)">Emprendimiento</div>
+          <div class="listing-title">Compra de equipamiento para panadería artesanal en Córdoba</div>
+          <div class="listing-desc">Busco financiar horno industrial y amasadora. Negocio en marcha desde 2021 con facturación mensual de $2.8M.</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:24px;font-weight:800;color:var(--azul)">ARS 4.500.000</div>
+          <div class="badge badge-oro">Tasa 55% anual ARS</div>
+          <div style="font-size:12px;color:var(--gris-medio);margin-top:4px">6 meses · Córdoba</div>
+        </div>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar" style="width:28%"></div></div>
+      <div class="crowd-amounts"><span>Financiado: ARS 1.260.000 (28%)</span><span>Restante: ARS 3.240.000</span></div>
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="showModal('loginModal')">Financiar este proyecto</button>
+        <button class="btn btn-outline btn-sm">Ver detalles</button>
+        <span style="font-size:12px;color:var(--gris-medio);align-self:center">👤 1 financiador · Publicado hace 1 día</span>
+      </div>
+    </div>
+
+    <div class="crowd-card">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <div class="listing-tag" style="background:#e0fff6;color:var(--verde)">Tecnología</div>
+          <div class="listing-title">Financiamiento para escalar SaaS de gestión de PyMEs</div>
+          <div class="listing-desc">Producto con 120 clientes activos y MRR de USD 3.200. Necesito capital para contratar desarrolladores.</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:24px;font-weight:800;color:var(--azul)">USD 15.000</div>
+          <div class="badge badge-azul">Tasa 22% anual USD</div>
+          <div style="font-size:12px;color:var(--gris-medio);margin-top:4px">12 meses · Remoto</div>
+        </div>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar" style="width:85%"></div></div>
+      <div class="crowd-amounts"><span>Financiado: USD 12.750 (85%)</span><span>¡Casi completo!</span></div>
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn btn-verde btn-sm" onclick="showModal('loginModal')">🔥 Financiar ahora</button>
+        <button class="btn btn-outline btn-sm">Ver detalles</button>
+        <span style="font-size:12px;color:var(--gris-medio);align-self:center">👤 7 financiadores · Publicado hace 8 días</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PÁGINA: ASOCIACIONES -->
+<!-- ============================================================ -->
+<div class="page" id="page-asociaciones">
+  <div class="hero-banner" style="padding:40px 20px 36px">
+    <h1 style="font-size:30px">🤝 Asociaciones</h1>
+    <p>Encontrá el socio ideal para tu emprendimiento o empresa</p>
+  </div>
+  <div class="container">
+    <div style="display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="showModal('loginModal')">+ Publicar búsqueda de socio</button>
+    </div>
+    <div class="search-bar">
+      <input class="search-input" placeholder="🔍 Buscar por rubro, rol, ubicación...">
+      <select class="filter-select"><option>Inversión inicial</option><option>Hasta USD 5.000</option><option>USD 5.000–20.000</option><option>USD 20.000–100.000</option><option>+USD 100.000</option></select>
+      <select class="filter-select"><option>Todos los rubros</option><option>Tecnología</option><option>Agro</option><option>Gastronomía</option><option>Retail</option><option>Servicios</option></select>
+      <select class="filter-select"><option>Ubicación</option><option>CABA</option><option>Buenos Aires</option><option>Córdoba</option><option>Rosario</option><option>Remoto</option></select>
+    </div>
+    <div class="listing-grid">
+      <div class="listing-card">
+        <div class="listing-tag">Tecnología</div>
+        <div class="listing-title">Busco socio técnico para plataforma de logística inteligente</div>
+        <div class="listing-desc">Tengo el modelo de negocio validado y 3 clientes piloto. Busco CTO o desarrollador fullstack para co-fundar.</div>
+        <div class="listing-meta">
+          <span>💰 Inv. inicial: USD 8.000</span>
+          <span>📍 CABA · Remoto</span>
+          <span>👤 Rol: CTO/Dev</span>
+        </div>
+        <div style="margin-top:12px"><button class="btn btn-primary btn-sm" onclick="showModal('loginModal')">Contactar</button></div>
+      </div>
+      <div class="listing-card">
+        <div class="listing-tag" style="background:#fff3d6;color:var(--oro)">Gastronomía</div>
+        <div class="listing-title">Sociedad para restaurant de cocina regional en Palermo</div>
+        <div class="listing-desc">Tengo el local y la experiencia gastronómica. Busco socio inversor para equipamiento y capital inicial.</div>
+        <div class="listing-meta">
+          <span>💰 Inv. inicial: USD 25.000</span>
+          <span>📍 Palermo, CABA</span>
+          <span>👤 Rol: Inversor</span>
+        </div>
+        <div style="margin-top:12px"><button class="btn btn-primary btn-sm" onclick="showModal('loginModal')">Contactar</button></div>
+      </div>
+      <div class="listing-card">
+        <div class="listing-tag" style="background:#e0fff6;color:var(--verde)">Agro</div>
+        <div class="listing-title">Proyecto de producción de quinoa orgánica — Jujuy</div>
+        <div class="listing-desc">150 hectáreas disponibles, contrato de exportación con comprador europeo. Busco socio agrónomo y/o inversor.</div>
+        <div class="listing-meta">
+          <span>💰 Inv. inicial: USD 40.000</span>
+          <span>📍 Jujuy</span>
+          <span>👤 Rol: Agrónomo + Inversor</span>
+        </div>
+        <div style="margin-top:12px"><button class="btn btn-primary btn-sm" onclick="showModal('loginModal')">Contactar</button></div>
+      </div>
+      <div class="listing-card">
+        <div class="listing-tag">Retail</div>
+        <div class="listing-title">Franquicia de ropa deportiva — busco socio operativo</div>
+        <div class="listing-desc">Marca establecida, 8 sucursales en el país. Apertura nueva franquicia en Rosario, busco socio para operación diaria.</div>
+        <div class="listing-meta">
+          <span>💰 Inv. inicial: ARS 12M</span>
+          <span>📍 Rosario</span>
+          <span>👤 Rol: Operativo</span>
+        </div>
+        <div style="margin-top:12px"><button class="btn btn-primary btn-sm" onclick="showModal('loginModal')">Contactar</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PÁGINA: SERVICIOS -->
+<!-- ============================================================ -->
+<div class="page" id="page-servicios">
+  <div class="hero-banner" style="padding:40px 20px 36px">
+    <h1 style="font-size:30px">🛠️ Servicios para Empresas</h1>
+    <p>Marketplace B2B y C2B de servicios profesionales · Pedí presupuesto o publicá tu negocio</p>
+  </div>
+  <div class="container">
+    <div style="display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="showModal('loginModal')">+ Publicar mi servicio / empresa</button>
+      <button class="btn btn-outline" onclick="showModal('loginModal')">📋 Pedir presupuesto a proveedores</button>
+    </div>
+    <div class="search-bar">
+      <input class="search-input" placeholder="🔍 Buscar servicio, empresa, profesional...">
+      <select class="filter-select"><option>Categoría</option><option>Contabilidad</option><option>Legal</option><option>Marketing</option><option>Tecnología</option><option>RRHH</option><option>Logística</option><option>Finanzas</option></select>
+      <select class="filter-select"><option>Modalidad</option><option>Presencial</option><option>Remoto</option><option>Híbrido</option></select>
+      <select class="filter-select"><option>Precio</option><option>Por hora</option><option>Por proyecto</option><option>Mensual</option></select>
+    </div>
+
+    <!-- Categorías -->
+    <div class="industry-grid" style="margin-bottom:32px">
+      <div class="industry-card"><div class="industry-icon">📊</div><div class="industry-name">Contabilidad</div><div class="industry-count">142 proveedores</div></div>
+      <div class="industry-card"><div class="industry-icon">⚖️</div><div class="industry-name">Legal / Jurídico</div><div class="industry-count">98 proveedores</div></div>
+      <div class="industry-card"><div class="industry-icon">📱</div><div class="industry-name">Marketing Digital</div><div class="industry-count">284 proveedores</div></div>
+      <div class="industry-card"><div class="industry-icon">💻</div><div class="industry-name">Desarrollo IT</div><div class="industry-count">312 proveedores</div></div>
+      <div class="industry-card"><div class="industry-icon">👥</div><div class="industry-name">RRHH</div><div class="industry-count">76 proveedores</div></div>
+      <div class="industry-card"><div class="industry-icon">🚚</div><div class="industry-name">Logística</div><div class="industry-count">118 proveedores</div></div>
+      <div class="industry-card"><div class="industry-icon">💰</div><div class="industry-name">Finanzas / Crédito</div><div class="industry-count">54 proveedores</div></div>
+      <div class="industry-card"><div class="industry-icon">🎨</div><div class="industry-name">Diseño</div><div class="industry-count">196 proveedores</div></div>
+    </div>
+
+    <div class="listing-grid">
+      <div class="listing-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--azul),var(--celeste));display:flex;align-items:center;justify-content:center;font-size:20px">📊</div>
+          <div><div class="listing-title" style="margin-bottom:0">Estudio Contable Digital</div><div style="font-size:12px;color:var(--gris-medio)">⭐⭐⭐⭐⭐ 4.9 (48 reseñas)</div></div>
+        </div>
+        <div class="listing-desc">Contabilidad para PyMEs y monotributistas. Declaraciones, liquidación de sueldos, balances y consultoría fiscal.</div>
+        <div class="listing-meta">
+          <span>💰 Desde $45.000/mes</span><span>📍 Remoto · CABA</span>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn btn-primary btn-sm" onclick="showModal('loginModal')">Contactar</button>
+          <button class="btn btn-outline btn-sm" onclick="showModal('loginModal')">Ver perfil</button>
+        </div>
+      </div>
+      <div class="listing-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:20px">💻</div>
+          <div><div class="listing-title" style="margin-bottom:0">DevLab Argentina</div><div style="font-size:12px;color:var(--gris-medio)">⭐⭐⭐⭐⭐ 4.8 (31 reseñas)</div></div>
+        </div>
+        <div class="listing-desc">Desarrollo web y mobile, sistemas de gestión, e-commerce. Stack: React, Node.js, Python. Proyectos a medida.</div>
+        <div class="listing-meta">
+          <span>💰 Desde USD 2.500/proyecto</span><span>📍 Remoto</span>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn btn-primary btn-sm" onclick="showModal('loginModal')">Contactar</button>
+          <button class="btn btn-outline btn-sm">Ver perfil</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PÁGINA: BOLSA DE TRABAJO -->
+<!-- ============================================================ -->
+<div class="page" id="page-trabajo">
+  <div class="hero-banner" style="padding:40px 20px 36px">
+    <h1 style="font-size:30px">💼 Bolsa de Trabajo</h1>
+    <p>Encontrá tu próximo empleo o el talento que buscás · Búsqueda por habilidades</p>
+  </div>
+  <div class="container">
+    <div style="display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="showModal('loginModal')">+ Publicar posición</button>
+      <button class="btn btn-outline" onclick="showModal('loginModal')">Mi CV / Perfil laboral</button>
+    </div>
+    <div class="search-bar">
+      <input class="search-input" placeholder="🔍 Cargo, habilidad, empresa...">
+      <select class="filter-select"><option>Modalidad</option><option>Remoto</option><option>Presencial</option><option>Híbrido</option></select>
+      <select class="filter-select"><option>Sector</option><option>Tecnología</option><option>Finanzas</option><option>Marketing</option><option>Agro</option><option>Salud</option></select>
+      <select class="filter-select"><option>Seniority</option><option>Junior</option><option>Semi-senior</option><option>Senior</option><option>Lead</option><option>Manager</option></select>
+    </div>
+
+    <div id="jobList">
+      <div class="job-card">
+        <div class="job-logo">💳</div>
+        <div class="job-info">
+          <div class="job-title">Analista de Datos Senior</div>
+          <div class="job-company">Banco Galicia · Buenos Aires (Híbrido)</div>
+          <div class="job-tags">
+            <span class="job-tag">SQL</span><span class="job-tag">Python</span><span class="job-tag">Power BI</span><span class="job-tag">Excel avanzado</span>
+            <span class="badge badge-azul">Remoto parcial</span>
+            <span class="badge badge-verde">USD 2.000–2.800/mes</span>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="showModal('loginModal')">Postularme</button>
+      </div>
+
+      <div class="job-card">
+        <div class="job-logo">🛒</div>
+        <div class="job-info">
+          <div class="job-title">Desarrollador Fullstack</div>
+          <div class="job-company">Mercado Libre · Buenos Aires / Remoto</div>
+          <div class="job-tags">
+            <span class="job-tag">React</span><span class="job-tag">Node.js</span><span class="job-tag">Java</span><span class="job-tag">AWS</span>
+            <span class="badge badge-azul">100% Remoto</span>
+            <span class="badge badge-verde">USD 3.500–5.000/mes</span>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="showModal('loginModal')">Postularme</button>
+      </div>
+
+      <div class="job-card">
+        <div class="job-logo">🌾</div>
+        <div class="job-info">
+          <div class="job-title">Ingeniero Agrónomo</div>
+          <div class="job-company">Los Grobo · Entre Ríos / Córdoba</div>
+          <div class="job-tags">
+            <span class="job-tag">GIS</span><span class="job-tag">Agricultura de precisión</span><span class="job-tag">Soja/Maíz</span>
+            <span class="badge badge-oro">Presencial</span>
+            <span class="badge badge-verde">ARS 1.200.000/mes</span>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="showModal('loginModal')">Postularme</button>
+      </div>
+
+      <div class="job-card">
+        <div class="job-logo">⚡</div>
+        <div class="job-info">
+          <div class="job-title">Gerente de Marketing Digital</div>
+          <div class="job-company">Startup FinTech · CABA / Híbrido</div>
+          <div class="job-tags">
+            <span class="job-tag">Google Ads</span><span class="job-tag">Meta Ads</span><span class="job-tag">Analytics</span><span class="job-tag">CRM</span>
+            <span class="badge badge-azul">Híbrido</span>
+            <span class="badge badge-verde">ARS 2.500.000/mes</span>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="showModal('loginModal')">Postularme</button>
+      </div>
+
+      <div class="job-card">
+        <div class="job-logo">🏗️</div>
+        <div class="job-info">
+          <div class="job-title">Analista de Comercio Exterior Senior</div>
+          <div class="job-company">Aceitera General Deheza · Buenos Aires</div>
+          <div class="job-tags">
+            <span class="job-tag">SIRA</span><span class="job-tag">Comex</span><span class="job-tag">Inglés avanzado</span><span class="job-tag">SAP</span>
+            <span class="badge badge-oro">Presencial CABA</span>
+            <span class="badge badge-verde">ARS 1.800.000/mes</span>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="showModal('loginModal')">Postularme</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PÁGINA: MI PERFIL -->
+<!-- ============================================================ -->
+<div class="page" id="page-perfil">
+  <div id="perfil-nologin">
+    <div class="hero-banner" style="padding:40px 20px 36px">
+      <h1 style="font-size:30px">👤 Mi Perfil</h1>
+      <p>Iniciá sesión para acceder a tu perfil y participar en el ecosistema</p>
+    </div>
+    <div class="login-box">
+      <h2>Bienvenido a ArgentinaBiz</h2>
+      <p>Registrate gratis para publicar, postularte e invertir</p>
+      <button class="social-btn" onclick="fakeLogin()"><span style="font-size:20px">🔵</span> Continuar con Google</button>
+      <button class="social-btn" onclick="fakeLogin()"><span style="font-size:20px">📘</span> Continuar con Facebook</button>
+      <button class="social-btn" onclick="fakeLogin()"><span style="font-size:20px">⬛</span> Continuar con Apple</button>
+      <div class="divider-text">o con tu email</div>
+      <div class="form-group"><input class="form-input" type="email" placeholder="tu@email.com"></div>
+      <div class="form-group"><input class="form-input" type="password" placeholder="Contraseña"></div>
+      <button class="btn btn-primary btn-lg" style="width:100%" onclick="fakeLogin()">Iniciar sesión</button>
+      <p style="text-align:center;margin-top:14px;font-size:13px;color:var(--gris-medio)">¿No tenés cuenta? <a href="#" onclick="fakeLogin()" style="color:var(--celeste);font-weight:600">Registrate gratis</a></p>
+    </div>
+  </div>
+
+  <div id="perfil-loggedin" style="display:none">
+    <div style="background:linear-gradient(135deg,var(--azul),var(--celeste));padding:32px 20px;color:#fff">
+      <div style="max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+        <div style="width:72px;height:72px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:32px">👤</div>
+        <div>
+          <div style="font-size:22px;font-weight:800">Juan García</div>
+          <div style="opacity:0.8;font-size:14px">Empresario · Buenos Aires · Miembro desde 2026</div>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+            <span class="badge badge-azul" style="background:rgba(255,255,255,0.2);color:#fff">✓ Verificado</span>
+            <span class="badge" style="background:rgba(245,166,35,0.3);color:var(--oro-claro)">⭐ Usuario Premium</span>
+          </div>
+        </div>
+        <div style="margin-left:auto">
+          <button class="btn btn-outline" style="border-color:rgba(255,255,255,0.5);color:#fff" onclick="fakeLogout()">Cerrar sesión</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Publicaciones activas</div><div class="stat-value">3</div><div class="stat-sub">2 servicios · 1 asociación</div></div>
+        <div class="stat-card"><div class="stat-label">Inversiones activas</div><div class="stat-value">2</div><div class="stat-sub">USD 3.800 comprometidos</div></div>
+        <div class="stat-card"><div class="stat-label">Postulaciones</div><div class="stat-value">7</div><div class="stat-sub">3 en proceso</div></div>
+        <div class="stat-card"><div class="stat-label">Contactos</div><div class="stat-value">24</div><div class="stat-sub">Esta semana: +5</div></div>
+      </div>
+
+      <div class="profile-menu">
+        <div class="profile-tab active" onclick="switchProfile(this,'datos')">Datos Personales</div>
+        <div class="profile-tab" onclick="switchProfile(this,'empresa')">Mi Empresa</div>
+        <div class="profile-tab" onclick="switchProfile(this,'laboral')">Perfil Laboral</div>
+        <div class="profile-tab" onclick="switchProfile(this,'inversiones')">Inversiones</div>
+        <div class="profile-tab" onclick="switchProfile(this,'publicaciones')">Mis Publicaciones</div>
+        <div class="profile-tab" onclick="switchProfile(this,'notif')">Notificaciones</div>
+        <div class="profile-tab" onclick="switchProfile(this,'docs')">Documentación</div>
+      </div>
+
+      <!-- DATOS PERSONALES -->
+      <div class="profile-content active" id="pc-datos">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Nombre</label><input class="form-input" value="Juan"></div>
+          <div class="form-group"><label class="form-label">Apellido</label><input class="form-input" value="García"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" value="juan@ejemplo.com"></div>
+          <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" value="+54 9 11 XXXX-XXXX"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">CUIT/CUIL</label><input class="form-input" placeholder="20-XXXXXXXX-X"></div>
+          <div class="form-group"><label class="form-label">Fecha de nacimiento</label><input class="form-input" type="date"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Ubicación</label><input class="form-input" value="Buenos Aires, CABA"></div>
+        <div class="form-group"><label class="form-label">Biografía profesional</label><textarea class="form-input" rows="3" placeholder="Contá brevemente sobre vos y tu trayectoria..."></textarea></div>
+        <button class="btn btn-primary" onclick="showToast('✓ Datos guardados correctamente')">Guardar cambios</button>
+      </div>
+
+      <!-- EMPRESA -->
+      <div class="profile-content" id="pc-empresa">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Razón social</label><input class="form-input" placeholder="Mi Empresa S.A.S."></div>
+          <div class="form-group"><label class="form-label">CUIT empresa</label><input class="form-input" placeholder="30-XXXXXXXX-X"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Sector / Rubro</label><select class="form-input filter-select"><option>Tecnología</option><option>Agro</option><option>Servicios</option><option>Comercio</option></select></div>
+          <div class="form-group"><label class="form-label">Año de fundación</label><input class="form-input" type="number" placeholder="2020"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Descripción de la empresa</label><textarea class="form-input" rows="3" placeholder="¿A qué se dedica tu empresa?"></textarea></div>
+        <div class="form-group"><label class="form-label">Sitio web</label><input class="form-input" type="url" placeholder="https://miempresa.com"></div>
+        <button class="btn btn-primary" onclick="showToast('✓ Datos de empresa guardados')">Guardar</button>
+      </div>
+
+      <!-- LABORAL -->
+      <div class="profile-content" id="pc-laboral">
+        <div class="form-group"><label class="form-label">Título / Cargo actual</label><input class="form-input" placeholder="Gerente General, CEO, Desarrollador..."></div>
+        <div class="form-group"><label class="form-label">Habilidades clave (separadas por coma)</label><input class="form-input" placeholder="Excel, Python, Gestión de proyectos..."></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Seniority</label><select class="form-input filter-select"><option>Junior</option><option>Semi-senior</option><option selected>Senior</option><option>Lead</option></select></div>
+          <div class="form-group"><label class="form-label">Modalidad preferida</label><select class="form-input filter-select"><option>Presencial</option><option selected>Híbrido</option><option>Remoto</option></select></div>
+        </div>
+        <div class="form-group"><label class="form-label">CV / LinkedIn</label><input class="form-input" type="url" placeholder="https://linkedin.com/in/juangarcia"></div>
+        <button class="btn btn-primary" onclick="showToast('✓ Perfil laboral actualizado')">Guardar</button>
+      </div>
+
+      <!-- INVERSIONES -->
+      <div class="profile-content" id="pc-inversiones">
+        <div class="listing-card" style="margin-bottom:14px">
+          <div class="listing-tag" style="background:#e0fff6;color:var(--verde)">Activa</div>
+          <div class="listing-title">Préstamo PyME textil — USD 2.000 al 18% anual</div>
+          <div class="listing-meta"><span>📅 Vencimiento: 25/06/2026</span><span>💰 Interés acumulado: USD 89</span></div>
+          <div class="progress-bar-wrap" style="margin-top:10px"><div class="progress-bar" style="width:35%"></div></div>
+          <div class="crowd-amounts"><span>Transcurrido 35%</span><span>65 días restantes</span></div>
+        </div>
+        <div class="listing-card">
+          <div class="listing-tag" style="background:#e0eaff;color:var(--celeste)">Activa</div>
+          <div class="listing-title">SaaS FinTech — USD 1.800 al 22% anual</div>
+          <div class="listing-meta"><span>📅 Vencimiento: 12/03/2027</span><span>💰 Interés acumulado: USD 22</span></div>
+          <div class="progress-bar-wrap" style="margin-top:10px"><div class="progress-bar" style="width:8%"></div></div>
+          <div class="crowd-amounts"><span>Transcurrido 8%</span><span>348 días restantes</span></div>
+        </div>
+      </div>
+
+      <!-- PUBLICACIONES -->
+      <div class="profile-content" id="pc-publicaciones">
+        <p style="color:var(--texto-secundario);margin-bottom:16px">Administrá tus publicaciones activas en la plataforma</p>
+        <div class="listing-card" style="margin-bottom:14px">
+          <div class="listing-tag">Servicio activo</div>
+          <div class="listing-title">Consultoría en comercio exterior para PyMEs</div>
+          <div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-outline btn-sm">Editar</button><button class="btn btn-sm" style="background:#ffe0e0;color:var(--rojo);border:none" onclick="showToast('Publicación pausada')">Pausar</button></div>
+        </div>
+        <button class="btn btn-primary" onclick="showModal('loginModal')">+ Nueva publicación</button>
+      </div>
+
+      <!-- NOTIFICACIONES -->
+      <div class="profile-content" id="pc-notif">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="listing-card" style="border-left:4px solid var(--celeste)">
+            <div style="font-weight:700;margin-bottom:4px">💵 Pago recibido en inversión</div>
+            <div style="font-size:13px;color:var(--texto-secundario)">Recibiste USD 89 de interés del préstamo PyME textil</div>
+            <div style="font-size:11px;color:var(--gris-medio);margin-top:6px">Hace 2 días</div>
+          </div>
+          <div class="listing-card">
+            <div style="font-weight:700;margin-bottom:4px">📬 Nuevo mensaje de contacto</div>
+            <div style="font-size:13px;color:var(--texto-secundario)">Alguien contactó tu publicación de consultoría</div>
+            <div style="font-size:11px;color:var(--gris-medio);margin-top:6px">Hace 5 días</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOCUMENTACIÓN -->
+      <div class="profile-content" id="pc-docs">
+        <p style="color:var(--texto-secundario);margin-bottom:20px">Cargá tu documentación para verificar tu identidad y habilitar todas las funciones</p>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="listing-card" style="display:flex;align-items:center;gap:14px">
+            <span style="font-size:28px">🪪</span>
+            <div style="flex:1"><div style="font-weight:700">DNI (frente y dorso)</div><div style="font-size:12px;color:var(--gris-medio)">Obligatorio para operar en crowdfunding</div></div>
+            <button class="btn btn-outline btn-sm">Subir</button>
+          </div>
+          <div class="listing-card" style="display:flex;align-items:center;gap:14px">
+            <span style="font-size:28px">🏦</span>
+            <div style="flex:1"><div style="font-weight:700">CBU / Alias bancario</div><div style="font-size:12px;color:var(--gris-medio)">Para recibir fondos en ARS</div></div>
+            <button class="btn btn-outline btn-sm">Agregar</button>
+          </div>
+          <div class="listing-card" style="display:flex;align-items:center;gap:14px">
+            <span style="font-size:28px">📄</span>
+            <div style="flex:1"><div style="font-weight:700">CUIT / Constancia AFIP</div><div style="font-size:12px;color:var(--gris-medio)">Para empresas y facturación</div></div>
+            <button class="btn btn-outline btn-sm">Subir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PÁGINA: OPCIONES -->
+<!-- ============================================================ -->
+<div class="page" id="page-opciones">
+  <div class="hero-banner" style="padding:40px 20px 36px">
+    <h1 style="font-size:30px">⚙️ Opciones</h1>
+    <p>Personalizá tu experiencia en ArgentinaBiz</p>
+  </div>
+  <div class="container-sm">
+    <div class="listing-card" style="margin-bottom:14px">
+      <div class="listing-title">🌙 Modo oscuro</div>
+      <div class="listing-desc">Cambiá la apariencia de la plataforma</div>
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;margin-top:10px">
+        <input type="checkbox" id="darkToggle" onchange="toggleDark()"> <span style="font-size:13px;color:var(--texto-secundario)">Activar modo oscuro</span>
+      </label>
+    </div>
+    <div class="listing-card" style="margin-bottom:14px">
+      <div class="listing-title">🔔 Notificaciones</div>
+      <div class="listing-desc">Configurá qué alertas recibir por email</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" checked> Novedades de mis inversiones</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" checked> Nuevas solicitudes de crowdfunding</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox"> Newsletter semanal de economía</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" checked> Mensajes de contacto</label>
+      </div>
+    </div>
+    <div class="listing-card" style="margin-bottom:14px">
+      <div class="listing-title">💱 Moneda de referencia por defecto</div>
+      <select class="filter-select" style="margin-top:10px;width:100%"><option>USD (Dólar)</option><option selected>ARS (Peso Argentino)</option><option>EUR (Euro)</option></select>
+    </div>
+    <div class="listing-card" style="margin-bottom:14px">
+      <div class="listing-title">🗑️ Eliminar cuenta</div>
+      <div class="listing-desc">Esta acción es permanente e irreversible</div>
+      <button class="btn btn-sm" style="background:#ffe0e0;color:var(--rojo);border:none;margin-top:10px" onclick="showToast('Por seguridad, enviamos un email de confirmación')">Solicitar eliminación</button>
+    </div>
+    <button class="btn btn-primary" onclick="showToast('✓ Configuración guardada')">Guardar opciones</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:12px">Argentina<span style="color:#4d7fff">Biz</span></div>
+        <p style="font-size:13px;line-height:1.6">El ecosistema laboral, emprendedor y empresarial argentino en un solo lugar.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Plataforma</h4>
+        <span class="footer-link" onclick="navigate('inicio')">Inicio</span>
+        <span class="footer-link" onclick="navigate('noticias')">Noticias</span>
+        <span class="footer-link" onclick="navigate('mercados')">Mercados</span>
+        <span class="footer-link" onclick="navigate('crowdfunding')">Crowdfunding</span>
+        <span class="footer-link" onclick="navigate('asociaciones')">Asociaciones</span>
+      </div>
+      <div class="footer-col">
+        <h4>Servicios</h4>
+        <span class="footer-link" onclick="navigate('servicios')">Marketplace B2B</span>
+        <span class="footer-link" onclick="navigate('trabajo')">Bolsa de Trabajo</span>
+        <span class="footer-link" onclick="navigate('perfil')">Mi Perfil</span>
+        <span class="footer-link" onclick="navigate('opciones')">Opciones</span>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <span class="footer-link">Términos y condiciones</span>
+        <span class="footer-link">Política de privacidad</span>
+        <span class="footer-link">Cookies</span>
+        <span class="footer-link">Cumplimiento normativo</span>
+        <span class="footer-link">AFIP / Regulaciones</span>
+      </div>
+      <div class="footer-col">
+        <h4>Ayuda</h4>
+        <span class="footer-link">Centro de ayuda</span>
+        <span class="footer-link">Contacto</span>
+        <span class="footer-link">Reportar problema</span>
+        <span class="footer-link">Preguntas frecuentes</span>
+        <span class="footer-link">Anunciar</span>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 ArgentinaBiz · Todos los derechos reservados</div>
+      <div style="display:flex;gap:14px">
+        <span class="footer-link" style="margin:0">Twitter/X</span>
+        <span class="footer-link" style="margin:0">Instagram</span>
+        <span class="footer-link" style="margin:0">LinkedIn</span>
+      </div>
+      <div style="font-size:11px;opacity:0.5">Cotizaciones con fines informativos. No constituye asesoramiento financiero.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ============================================================
+// CONFIGURACIÓN GLOBAL
+// ============================================================
+let loggedIn = false;
+let allNewsArticles = [];   // todos los artículos cargados
+let activeCategory = '';    // filtro de categoría activo
+const RSS2JSON = 'https://api.rss2json.com/v1/api.json';
+const PROXY = 'https://api.allorigins.win/raw?url=';
+const DOLAR_API = 'https://dolarapi.com/v1/dolares';
+const COINGECKO = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,tether,cardano&vs_currencies=usd&include_24hr_change=true&include_market_cap=true&include_24hr_vol=true&include_high_low_24h=true';
+
+// Fuentes RSS argentinas de economía
+const RSS_FEEDS = [
+  { url: 'https://www.infobae.com/feeds/rss/economia.xml', source: 'Infobae' },
+  { url: 'https://www.ambito.com/rss/economia.xml',        source: 'Ámbito' },
+  { url: 'https://www.cronista.com/rss/economia.rss',      source: 'Cronista' },
+  { url: 'https://eleconomista.com.ar/rss/economia.xml',   source: 'Economista' },
+];
+
+// Activos por tabla
+const MERVAL_SYMBOLS  = 'GGAL.BA,YPFD.BA,BMA.BA,PAMP.BA,TGSU2.BA,TECO2.BA,LOMA.BA,CEPU.BA,ALUA.BA,TXAR.BA';
+const MERVAL_NAMES    = { 'GGAL.BA':'Galicia','YPFD.BA':'YPF','BMA.BA':'Banco Macro','PAMP.BA':'Pampa Energía','TGSU2.BA':'TGS','TECO2.BA':'Telecom','LOMA.BA':'Loma Negra','CEPU.BA':'Central Puerto','ALUA.BA':'Aluar','TXAR.BA':'Ternium Arg.' };
+const ADRS_SYMBOLS    = 'GGAL,YPF,BMA,MELI,LOMA,TGS,CEPU,PAM,TEO,BIOX';
+const ADRS_NAMES      = { 'GGAL':'Galicia','YPF':'YPF','BMA':'Banco Macro','MELI':'Mercado Libre','LOMA':'Loma Negra','TGS':'TGS','CEPU':'Central Puerto','PAM':'Pampa Energía','TEO':'Telecom','BIOX':'Bioceres' };
+const ETFS_SYMBOLS    = 'SPY,QQQ,ARGT,IWM,DIA,GLD,SLV,USO';
+const ETFS_NAMES      = { 'SPY':'SPDR S&P 500','QQQ':'Invesco QQQ','ARGT':'iShares MSCI Arg','IWM':'iShares Russell 2000','DIA':'SPDR Dow Jones','GLD':'SPDR Gold','SLV':'iShares Silver','USO':'United States Oil' };
+const SPY_SYMBOLS     = 'AAPL,NVDA,MSFT,AMZN,GOOGL,META,TSLA,BRK-B,JPM,UNH';
+const SPY_NAMES       = { 'AAPL':'Apple','NVDA':'NVIDIA','MSFT':'Microsoft','AMZN':'Amazon','GOOGL':'Alphabet','META':'Meta','TSLA':'Tesla','BRK-B':'Berkshire','JPM':'JPMorgan','UNH':'UnitedHealth' };
+
+// ============================================================
+// NAVEGACIÓN
+// ============================================================
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const el = document.getElementById('page-' + page);
+  if (el) el.classList.add('active');
+  const links = document.querySelectorAll('.nav-link');
+  links.forEach(l => {
+    if (l.textContent.toLowerCase().includes(page.replace('-',' ').split(' ')[0])) l.classList.add('active');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Carga lazy según la página
+  if (page === 'noticias' && allNewsArticles.length === 0) loadAllNews();
+  if (page === 'mercados') loadMercados();
+}
+
+// ============================================================
+// UTILIDADES DE FORMATO
+// ============================================================
+function fmt(n, dec=2) {
+  if (n == null || isNaN(n)) return '—';
+  return n.toLocaleString('es-AR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+}
+function fmtPct(n) {
+  if (n == null || isNaN(n)) return '—';
+  const cls = n > 0 ? 'up' : n < 0 ? 'down' : 'neutral';
+  const sign = n > 0 ? '+' : '';
+  return `<span class="${cls}">${sign}${fmt(n)}%</span>`;
+}
+function fmtVol(n) {
+  if (!n) return '—';
+  if (n >= 1e9) return (n/1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n/1e3).toFixed(0) + 'K';
+  return n.toString();
+}
+function nowStr() {
+  const d = new Date();
+  return d.toLocaleDateString('es-AR') + ' ' + d.toLocaleTimeString('es-AR', {hour:'2-digit',minute:'2-digit'});
+}
+
+// ============================================================
+// TIPOS DE CAMBIO — dolarapi.com (GRATIS, OFICIAL)
+// ============================================================
+async function loadDolares() {
+  try {
+    const res = await fetch(DOLAR_API);
+    const data = await res.json();
+    const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val ? '$'+fmt(val,0) : '—'; };
+    data.forEach(d => {
+      if (d.casa === 'blue')     { set('d-blue-c', d.compra); set('d-blue-v', d.venta); }
+      if (d.casa === 'oficial')  { set('d-oficial-v', d.venta); }
+      if (d.casa === 'bolsa')    { set('d-mep-v', d.venta); }
+      if (d.casa === 'contadoconliqui') { set('d-ccl-v', d.venta); }
+      if (d.casa === 'tarjeta')  { set('d-tarjeta-v', d.venta); }
+      if (d.casa === 'europa')   { set('d-euro-v', d.venta); }
+      if (d.casa === 'cripto')   { set('d-cripto-v', d.venta); }
+    });
+    const ts = document.getElementById('dolarTimestamp');
+    if (ts) ts.textContent = 'Fuente: dolarapi.com · Actualizado: ' + nowStr();
+    // Actualizar ticker también
+    updateTickerFromDolar(data);
+  } catch(e) {
+    console.warn('dolarapi error:', e);
+  }
+}
+
+function updateTickerFromDolar(data) {
+  const blue = data.find(d => d.casa === 'blue');
+  const oficial = data.find(d => d.casa === 'oficial');
+  if (blue) {
+    const el = document.querySelector('.ticker-item .ticker-name[data-key="blue"]');
+    // Update via tickerData live update (handled in ticker rebuild)
+  }
+}
+
+// ============================================================
+// COTIZACIONES MERCADOS — Yahoo Finance via Proxy
+// ============================================================
+async function fetchYahoo(symbols) {
+  const encoded = encodeURIComponent(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}&lang=es-AR`);
+  try {
+    const res = await fetch(PROXY + encoded);
+    const data = await res.json();
+    return data?.quoteResponse?.result || [];
+  } catch(e) {
+    console.warn('Yahoo Finance error:', e);
+    return [];
+  }
+}
+
+function buildStockRow(q, nameMap, currency='ARS') {
+  const sym = q.symbol;
+  const name = nameMap[sym] || sym;
+  const price = q.regularMarketPrice;
+  const chgPct = q.regularMarketChangePercent;
+  const open = q.regularMarketOpen;
+  const high = q.regularMarketDayHigh;
+  const low = q.regularMarketDayLow;
+  const vol = q.regularMarketVolume;
+  const curr = currency === 'ARS' ? '$' : 'U$D ';
+  return `<tr>
+    <td><strong>${name}</strong><span class="ticker-sym">${sym}</span></td>
+    <td>${curr}${fmt(price)}</td>
+    <td>${fmtPct(chgPct)}</td>
+    <td>${curr}${fmt(open)}</td>
+    <td>${curr}${fmt(high)}</td>
+    <td>${curr}${fmt(low)}</td>
+    <td>${fmtVol(vol)}</td>
+  </tr>`;
+}
+
+async function loadMercados() {
+  // Cargar dolares
+  loadDolares();
+  // Cargar crypto
+  loadCrypto();
+  // Cargar acciones en paralelo
+  Promise.all([
+    fetchYahoo(MERVAL_SYMBOLS),
+    fetchYahoo(ADRS_SYMBOLS),
+    fetchYahoo(ETFS_SYMBOLS),
+    fetchYahoo(SPY_SYMBOLS),
+  ]).then(([merval, adrs, etfs, spy]) => {
+    const ts = nowStr();
+    const fill = (bodyId, quotes, names, currency, tsId) => {
+      const body = document.getElementById(bodyId);
+      if (!body) return;
+      if (!quotes.length) {
+        body.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--gris-medio)">⚠️ No se pudieron cargar cotizaciones (mercado cerrado o límite de API). Intentá de nuevo en unos minutos.</td></tr>';
+        return;
+      }
+      body.innerHTML = quotes.map(q => buildStockRow(q, names, currency)).join('');
+      const tel = document.getElementById(tsId);
+      if (tel) tel.textContent = '· Actualizado: ' + ts;
+    };
+    fill('body-merval', merval, MERVAL_NAMES, 'ARS', 'merval-ts');
+    fill('body-adrs',   adrs,   ADRS_NAMES,   'USD', 'adrs-ts');
+    fill('body-etfs',   etfs,   ETFS_NAMES,   'USD', 'etfs-ts');
+    fill('body-spy',    spy,    SPY_NAMES,    'USD', 'spy-ts');
+  });
+}
+
+// ============================================================
+// CRYPTO — CoinGecko (GRATIS, SIN CLAVE)
+// ============================================================
+async function loadCrypto() {
+  try {
+    const res = await fetch(COINGECKO);
+    const data = await res.json();
+    const coins = [
+      { id:'bitcoin',  sym:'BTC', name:'Bitcoin' },
+      { id:'ethereum', sym:'ETH', name:'Ethereum' },
+      { id:'tether',   sym:'USDT', name:'Tether (USDT)' },
+      { id:'solana',   sym:'SOL', name:'Solana' },
+      { id:'cardano',  sym:'ADA', name:'Cardano' },
+    ];
+    const body = document.getElementById('body-crypto');
+    if (!body) return;
+    body.innerHTML = coins.map(c => {
+      const d = data[c.id];
+      if (!d) return '';
+      return `<tr>
+        <td><strong>${c.name}</strong><span class="ticker-sym">${c.sym}</span></td>
+        <td>USD ${fmt(d.usd)}</td>
+        <td>${fmtPct(d.usd_24h_change)}</td>
+        <td>${fmtVol(d.usd_market_cap)}</td>
+        <td>${fmtVol(d.usd_24h_vol)}</td>
+        <td>USD ${fmt(d.usd_24h_high)}</td>
+        <td>USD ${fmt(d.usd_24h_low)}</td>
+      </tr>`;
+    }).join('');
+    // Actualizar ticker BTC
+    if (data.bitcoin) {
+      document.querySelectorAll('.ticker-item').forEach(item => {
+        if (item.querySelector('.ticker-name')?.textContent === 'BTC') {
+          const val = item.querySelector('.ticker-value');
+          const chg = item.querySelector('[class^="ticker-"]');
+          if (val) val.textContent = '$' + fmt(data.bitcoin.usd, 0);
+        }
+      });
+    }
+  } catch(e) {
+    console.warn('CoinGecko error:', e);
+  }
+}
+
+// ============================================================
+// DESCARGA EXCEL REAL CON SheetJS
+// ============================================================
+function downloadTableExcel(tableId, filename) {
+  const table = document.getElementById(tableId);
+  if (!table) { showToast('⚠ Tabla no encontrada'); return; }
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.table_to_sheet(table);
+  // Ancho de columnas automático
+  ws['!cols'] = [{ wch:28 },{ wch:14 },{ wch:10 },{ wch:12 },{ wch:12 },{ wch:12 },{ wch:12 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'ArgentinaBiz');
+  XLSX.writeFile(wb, filename + '_' + new Date().toISOString().slice(0,10) + '.xlsx');
+  showToast('✅ Descargando ' + filename + '.xlsx');
+}
+
+// ============================================================
+// NOTICIAS — RSS via rss2json.com
+// ============================================================
+const CAT_KEYWORDS = {
+  'Dólar':    ['dólar','dollar','blue','mep','ccl','cambiario','devalua','peso','moneda','divisa','bcra','cambia'],
+  'Mercados': ['merval','bolsa','acciones','bono','cedear','byma','índice','cotiza','acción','bursátil','ypf','galicia'],
+  'Energía':  ['energía','nafta','combustible','gas','petróleo','ypf','electricidad','generación','nuclear','vaca muerta'],
+  'Agro':     ['soja','maíz','trigo','campo','agro','siembra','cosecha','agroindustria','seco','harina','aceite','exporta','granos'],
+  'Empresas': ['empresa','inversión','inversiones','negocio','pyme','startup','compañía','fusión','adquiere'],
+};
+const CAT_COLORS = {
+  'Economía': 'linear-gradient(135deg,#0a2540,#1a5cff)',
+  'Dólar':    'linear-gradient(135deg,#1a3a7a,#00c896)',
+  'Mercados': 'linear-gradient(135deg,#7c3aed,#c4b5fd)',
+  'Energía':  'linear-gradient(135deg,#b91c1c,#ef4444)',
+  'Agro':     'linear-gradient(135deg,#065f46,#00c896)',
+  'Empresas': 'linear-gradient(135deg,#b45309,#fcd34d)',
+};
+const CAT_ICONS = { 'Economía':'🏛️','Dólar':'💵','Mercados':'📊','Energía':'⚡','Agro':'🌾','Empresas':'🏗️' };
+
+function categorizeArticle(title, desc) {
+  const text = (title + ' ' + desc).toLowerCase();
+  for (const [cat, keys] of Object.entries(CAT_KEYWORDS)) {
+    if (keys.some(k => text.includes(k))) return cat;
+  }
+  return 'Economía';
+}
+
+async function fetchRSS(feedUrl, source) {
+  const url = `${RSS2JSON}?rss_url=${encodeURIComponent(feedUrl)}&count=8`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.status !== 'ok') return [];
+    return data.items.map(item => ({
+      title: item.title,
+      desc: item.description?.replace(/<[^>]+>/g,'').slice(0,140) || '',
+      link: item.link,
+      date: new Date(item.pubDate),
+      source,
+      category: categorizeArticle(item.title, item.description || ''),
+    })).filter(a => {
+      // Últimas 48h
+      const diff = (Date.now() - a.date) / 3600000;
+      return diff <= 48;
+    });
+  } catch(e) {
+    console.warn('RSS error:', source, e);
+    return [];
+  }
+}
+
+async function loadAllNews() {
+  const status = document.getElementById('newsStatus');
+  if (status) status.textContent = '⏳ Cargando noticias desde las fuentes...';
+  const grid = document.getElementById('newsGrid');
+  if (grid) grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gris-medio)">⏳ Cargando...</div>';
+  
+  const results = await Promise.allSettled(RSS_FEEDS.map(f => fetchRSS(f.url, f.source)));
+  allNewsArticles = results.flatMap(r => r.status === 'fulfilled' ? r.value : []);
+  
+  // Ordenar por fecha
+  allNewsArticles.sort((a,b) => b.date - a.date);
+  
+  // Si no cargó nada de las APIs (CORS, etc), mostrar noticias de muestra
+  if (allNewsArticles.length === 0) {
+    allNewsArticles = getSampleNews();
+  }
+  
+  updateCategoryCounts();
+  renderNews();
+}
+
+function getSampleNews() {
+  // Noticias de muestra en caso de que el RSS falle por CORS local
+  return [
+    { title:'Dólar blue cierra en $1.415: brecha con el oficial al mínimo histórico', desc:'El mercado paralelo muestra calma. MEP en $1.427, CCL en $1.480.', source:'Cronista', date:new Date(Date.now()-3600000*2), category:'Dólar', link:'#' },
+    { title:'Merval en dólares alcanza nuevos máximos: bancos y energéticas lideran', desc:'Galicia y Macro acumulan subas del 4%. El S&P Merval en ARS superó los 3 millones de puntos.', source:'Ámbito', date:new Date(Date.now()-3600000*4), category:'Mercados', link:'#' },
+    { title:'La nafta supera $2.000 en CABA: acumula suba del 20% en marzo', desc:'YPF cotiza Infinia Diesel a $2.128, Shell V-Power a $2.199. El gobierno analiza medidas.', source:'Infobae', date:new Date(Date.now()-3600000*6), category:'Energía', link:'#' },
+    { title:'Soja: campaña 2025/26 con proyección de 51 millones de toneladas', desc:'La Bolsa de Cereales elevó estimaciones tras lluvias favorables en el litoral.', source:'Ámbito', date:new Date(Date.now()-3600000*10), category:'Agro', link:'#' },
+    { title:'Mercado Libre invertirá USD 115 millones en centro de distribución bonaerense', desc:'La empresa anunció 800 nuevos puestos de trabajo y entregas en 24 horas.', source:'Economista', date:new Date(Date.now()-3600000*14), category:'Empresas', link:'#' },
+    { title:'Inflación de marzo: consultoras estiman IPC de 3,8%', desc:'El INDEC publicará datos oficiales la segunda semana de abril. Servicios saltaron 11%.', source:'Economista', date:new Date(Date.now()-3600000*20), category:'Economía', link:'#' },
+    { title:'El BCRA compró USD 320 millones en el mercado oficial: reservas en alza', desc:'El organismo acumula un saldo positivo de USD 2.100 millones en lo que va del año.', source:'Cronista', date:new Date(Date.now()-3600000*24), category:'Dólar', link:'#' },
+    { title:'Vaca Muerta: producción de shale oil bate récord histórico en febrero', desc:'La cuenca neuquina superó los 200.000 barriles diarios por primera vez en su historia.', source:'Infobae', date:new Date(Date.now()-3600000*28), category:'Energía', link:'#' },
+    { title:'Trigo: Argentina exportará 12 millones de toneladas esta campaña', desc:'Los embarques al exterior aceleran ante la demanda de Brasil y del norte de África.', source:'Ámbito', date:new Date(Date.now()-3600000*32), category:'Agro', link:'#' },
+    { title:'PyMEs industriales: producción cae 2,4% en febrero pero se recupera frente a 2025', desc:'La encuesta de Adimra muestra señales mixtas: textil y alimentos compensan la caída automotriz.', source:'Economista', date:new Date(Date.now()-3600000*40), category:'Empresas', link:'#' },
+  ];
+}
+
+function updateCategoryCounts() {
+  const counts = { '': allNewsArticles.length };
+  ['Economía','Dólar','Mercados','Energía','Agro','Empresas'].forEach(cat => {
+    counts[cat] = allNewsArticles.filter(a => a.category === cat).length;
+  });
+  const setCnt = (id, n) => { const el = document.getElementById(id); if(el) el.textContent = n > 0 ? `(${n})` : '(0)'; };
+  setCnt('cnt-all', counts['']);
+  ['Economía','Dólar','Mercados','Energía','Agro','Empresas'].forEach(cat => setCnt('cnt-'+cat, counts[cat]||0));
+}
+
+function setCatFilter(cat, el) {
+  activeCategory = cat;
+  document.querySelectorAll('#page-noticias .market-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderNews();
+}
+
+function filterNews() {
+  renderNews();
+}
+
+function renderNews() {
+  const search = (document.getElementById('newsSearch')?.value || '').toLowerCase().trim();
+  const source = document.getElementById('newsSource')?.value || '';
+  
+  let articles = allNewsArticles;
+  if (activeCategory) articles = articles.filter(a => a.category === activeCategory);
+  if (source)         articles = articles.filter(a => a.source === source);
+  if (search)         articles = articles.filter(a => a.title.toLowerCase().includes(search) || a.desc.toLowerCase().includes(search));
+  
+  const grid = document.getElementById('newsGrid');
+  const empty = document.getElementById('newsEmpty');
+  const status = document.getElementById('newsStatus');
+  
+  if (!grid) return;
+  
+  if (articles.length === 0) {
+    grid.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    if (status) status.textContent = '';
+  } else {
+    if (empty) empty.style.display = 'none';
+    const label = activeCategory || 'todas las categorías';
+    if (status) status.textContent = `Mostrando ${articles.length} artículos · ${label} · Últimas 48 hs`;
+    grid.innerHTML = articles.map(a => {
+      const bg = CAT_COLORS[a.category] || CAT_COLORS['Economía'];
+      const icon = CAT_ICONS[a.category] || '📰';
+      const ago = getTimeAgo(a.date);
+      return `<div class="news-card" onclick="window.open('${a.link}','_blank')">
+        <div class="news-card-img" style="background:${bg}">${icon}<div class="news-card-category">${a.category}</div></div>
+        <div class="news-card-body">
+          <div class="news-card-title">${a.title}</div>
+          <div class="news-card-desc">${a.desc}</div>
+          <div class="news-card-meta"><span>📅 ${ago}</span><span>📰 ${a.source}</span></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+function getTimeAgo(date) {
+  const h = Math.floor((Date.now() - date) / 3600000);
+  if (h < 1) return 'Hace menos de 1h';
+  if (h < 24) return `Hace ${h}h`;
+  const d = Math.floor(h/24);
+  return `Hace ${d} día${d>1?'s':''}`;
+}
+
+// ============================================================
+// MARKET TABS
+// ============================================================
+function switchTab(el, name) {
+  document.querySelectorAll('.market-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['merval','adrs','etfs','spy','crypto'].forEach(t => {
+    const el2 = document.getElementById('tab-' + t);
+    if (el2) el2.style.display = t === name ? 'block' : 'none';
+  });
+  const chartData = {
+    merval: { title:'S&P Merval — Acciones Locales', price:'—', change:'Cotizaciones BYMA diferidas 20 min', cls:'neutral' },
+    adrs:   { title:'ADRs Argentina — NYSE/NASDAQ', price:'—', change:'Cotizaciones diferidas 15 min', cls:'neutral' },
+    etfs:   { title:'ETFs Globales y Argentina', price:'—', change:'Cotizaciones diferidas 15 min', cls:'neutral' },
+    spy:    { title:'S&P 500 — Principales componentes', price:'—', change:'Cotizaciones diferidas 15 min', cls:'neutral' },
+    crypto: { title:'Criptomonedas — Datos en tiempo real', price:'—', change:'Fuente: CoinGecko · En vivo', cls:'up' },
+  };
+  if (chartData[name]) {
+    const ct = document.getElementById('chartTitle');
+    const cp = document.getElementById('chartPrice');
+    const cc = document.getElementById('chartChange');
+    if(ct) ct.textContent = chartData[name].title;
+    if(cp) cp.textContent = chartData[name].price;
+    if(cc) { cc.textContent = chartData[name].change; cc.className = 'chart-change ' + chartData[name].cls; }
+  }
+}
+
+// ============================================================
+// PERFIL TABS
+// ============================================================
+function switchProfile(el, name) {
+  document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.profile-content').forEach(c => c.classList.remove('active'));
+  const target = document.getElementById('pc-' + name);
+  if (target) target.classList.add('active');
+}
+
+// ============================================================
+// LOGIN / LOGOUT
+// ============================================================
+function fakeLogin() {
+  loggedIn = true;
+  closeModal('loginModal');
+  const nl = document.getElementById('perfil-nologin');
+  const li = document.getElementById('perfil-loggedin');
+  if(nl) nl.style.display = 'none';
+  if(li) li.style.display = 'block';
+  navigate('perfil');
+  showToast('✓ Sesión iniciada correctamente. ¡Bienvenido!');
+}
+function fakeLogout() {
+  loggedIn = false;
+  const nl = document.getElementById('perfil-nologin');
+  const li = document.getElementById('perfil-loggedin');
+  if(nl) nl.style.display = 'block';
+  if(li) li.style.display = 'none';
+  showToast('Sesión cerrada');
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function showModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', function(e) { if (e.target === o) o.classList.remove('show'); });
+});
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ============================================================
+// DARK MODE
+// ============================================================
+function toggleDark() {
+  document.body.classList.toggle('dark');
+  showToast(document.body.classList.contains('dark') ? '🌙 Modo oscuro activado' : '☀️ Modo claro activado');
+}
+
+// ============================================================
+// TIME TABS
+// ============================================================
+document.querySelectorAll('.time-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    this.closest('.time-tabs').querySelectorAll('.time-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Cargar tipos de cambio siempre al iniciar (visible en ticker)
+  loadDolares();
+  // Actualizar precios cada 5 minutos
+  setInterval(loadDolares, 300000);
+  // Actualizar noticias cada 30 minutos si la página está activa
+  setInterval(() => {
+    if (document.getElementById('page-noticias')?.classList.contains('active')) {
+      loadAllNews();
+    }
+  }, 1800000);
+});
+</script>
+</body>
+</html>
